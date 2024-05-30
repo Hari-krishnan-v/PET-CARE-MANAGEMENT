@@ -31,12 +31,7 @@ body{
     width: 768px;
     max-width: 100%;
     min-height: 480px;
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
-    transition: all .5s ease-in-out;
-}
-
-.container.container.active{
-  min-height: 560px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;;
 }
 
 .container p{
@@ -243,20 +238,18 @@ body{
 }
 
 .toggle-panel{
-  color: #fff;
-  position: absolute;
-  width: 50%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding: 44px 49px;
-  text-align: center;
-  background: linear-gradient(to right, #C33764, #1D2671);
-  top: 0;
-  transform: translateX(0);
-  transition: all 0.6s ease-in-out;
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 30px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
 }
 
 .toggle-left{
@@ -349,13 +342,6 @@ body{
     background: #0e4bf1;
   }
 
-
-  .error{
-    color: red;
-  }
-  .success{
-    color: green;
-  }
 
   /* ANIMATED BACKGROUND */
 
