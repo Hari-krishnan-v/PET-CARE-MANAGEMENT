@@ -7,11 +7,13 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('profile', views.profile),
-    path('treatment', views.treatment),
-    path('blank', views.blank),
-    path('contact', views.contact),
-    path('error', views.error),
+    path('profile/', views.profile, name='profile'),
+    path('treatment/', views.treatment, name='treatment'),
+    path('contact/profile/', views.profile, name='profile'), 
+    path('blank/', views.blank, name='blank'),
+    path('contact/', views.contact, name='contact'),
+    path('error/', views.error, name='error'),
     path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout'), 
-]
+    path('logout/', views.logout_view, name='logout'),
+    path('contact/contact/', views.contact, name='contact'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

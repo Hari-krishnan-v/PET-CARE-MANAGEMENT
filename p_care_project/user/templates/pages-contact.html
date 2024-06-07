@@ -1,6 +1,7 @@
+<!-- pages-contact.html -->
 {% extends "base.html" %}
 {% load static %}
-{% block title %} P-Care contact {% endblock %}
+{% block title %} P-Care Contact {% endblock %}
 
 {% block maincss %}  
 <link href="{% static '/css/contact.css' %}" rel="stylesheet">
@@ -11,7 +12,7 @@
       <h1>Contact</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="home">Home</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
           <li class="breadcrumb-item">Pages</li>
           <li class="breadcrumb-item active">Contact</li>
         </ol>
@@ -29,21 +30,21 @@
               <div class="info-box card">
                 <i class="bi bi-geo-alt"></i>
                 <h3>Address</h3>
-                <p>A108 Adam Street,<br>New York, NY 535022</p>
+                <p>Carmel College,<br>Muhamma, Alappuzha</p>
               </div>
             </div>
             <div class="col-lg-6">
               <div class="info-box card">
                 <i class="bi bi-telephone"></i>
                 <h3>Call Us</h3>
-                <p>+1 5589 55488 55<br>+1 6678 254445 41</p>
+                <p>+91 8089364271<br>+91 8089364271</p>
               </div>
             </div>
             <div class="col-lg-6">
               <div class="info-box card">
                 <i class="bi bi-envelope"></i>
                 <h3>Email Us</h3>
-                <p>info@example.com<br>contact@example.com</p>
+                <p>pcaremanagement7@gmail.com<br></p>
               </div>
             </div>
             <div class="col-lg-6">
@@ -59,7 +60,8 @@
 
         <div class="col-xl-6">
           <div class="card p-4">
-            <form action="forms/contact.php" method="post" class="php-email-form">
+            <form method="post">
+              {% csrf_token %}
               <div class="row gy-4">
 
                 <div class="col-md-6">
@@ -79,20 +81,45 @@
                 </div>
 
                 <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
-
-                  <button type="submit">Send Message</button>
+                  <button type="submit">
+                    <div class="svg-wrapper-1">
+                      <div class="svg-wrapper">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="24"
+                          height="24"
+                        >
+                          <path fill="none" d="M0 0h24v24H0z"></path>
+                          <path
+                            fill="currentColor"
+                            d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <span>Send</span>
+                  </button>
+                  
                 </div>
 
               </div>
             </form>
-          </div>
 
+            {% if messages %}
+            <div class="mt-3">
+                <ul>
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+          </div>
         </div>
 
       </div>
 
     </section>
-    {% endblock %}
+{% endblock %}

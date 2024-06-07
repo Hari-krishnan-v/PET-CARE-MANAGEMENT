@@ -5,13 +5,16 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from .models import Customer
+from django.core.mail import send_mail
+from django.conf import settings
+
 
 def login_view(request):
     context = {}
     if request.method == 'POST':
         if 'register' in request.POST:
             context['register'] = True
-            try:
+            try: 
                 username = request.POST.get('username')
                 password = request.POST.get('password')
                 email = request.POST.get('email')
@@ -78,7 +81,29 @@ def blank(request):
     return render(request,'pages-blank.html')
 
 def contact(request):
-    return render(request,'pages-contact.html')
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+
+        full_message = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+
+        try:
+            send_mail(
+                subject,
+                full_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.CONTACT_EMAIL],
+                fail_silently=False,
+            )
+            messages.success(request, 'Your message has been sent. Thank you!')
+        except Exception as e:
+            messages.error(request, f'An error occurred: {e}')
+        
+        return redirect('contact')
+
+    return render(request, 'pages-contact.html')
 
 def error(request):
     return render(request,'pages-error-404.html')

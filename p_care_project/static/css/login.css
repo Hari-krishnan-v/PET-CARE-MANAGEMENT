@@ -277,37 +277,6 @@ body{
 }
 
 
-/* --------------otp------------ */
-.otp {
-    display: none;
-    background: #fff;
-    padding: 30px 65px;
-    border-radius: 12px;
-    row-gap: 20px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  }
-  .otp header {
-    height: 65px;
-    width: 65px;
-    background: #4070f4;
-    color: #fff;
-    font-size: 2.5rem;
-    border-radius: 50%;
-  }
-  .otp h4 {
-    font-size: 1.25rem;
-    color: #333;
-    font-weight: 500;
-  }
-
-
-:where(.otp, form, .input-field, header) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
   form .input-field {
     flex-direction: row;
     column-gap: 10px;
@@ -474,4 +443,44 @@ body{
     }
   }
   
+  @media (max-width: 768px) {
+    .container {
+        width: 100%;
+        min-height: 560px;
+        border-radius: 0;
+    }
+
+    .toggle-container {
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .toggle {
+        width: 100%;
+    }
+
+    .toggle-left,
+    .toggle-right {
+        width: 100%;
+    }
+
+    .toggle-left {
+      transform: translateX(100%);
+  }
+}
+
+@media (max-width: 480px) {
+    .toggle-panel {
+        padding: 20px;
+    }
+
+    .container button {
+        padding: 8px 30px;
+    }
+
+    .container input {
+        padding: 8px 10px;
+    }
+
   
+}
