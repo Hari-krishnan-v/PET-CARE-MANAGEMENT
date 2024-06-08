@@ -7,7 +7,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Customer
 from django.core.mail import send_mail
 from django.conf import settings
-
+from .forms import AppointmentForm
+from .models import Appointment
 
 def login_view(request):
     context = {}
@@ -70,9 +71,20 @@ def logout_view(request):
 
 
 
-
-def treatment(request):
-    return render(request,'Treatment.html')
+@login_required
+def book_appointment(request):
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.user = request.user
+            appointment.save()
+            messages.success(request, 'Appointment booked successfully!')
+          
+    else:
+        form = AppointmentForm()
+    
+    return render(request, 'book_appointment.html', {'form': form})
 
 def profile(request):
     return render(request,'users-profile.html')
