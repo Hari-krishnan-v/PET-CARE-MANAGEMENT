@@ -37,7 +37,7 @@ def login_view(request):
                         user=user,
                         phone=phone,
                         address=address,
-                        profile_image=profile_image
+                       
                     )
                     customer.save()
                     messages.success(request, "User registered successfully")
@@ -117,5 +117,5 @@ def contact(request):
 
     return render(request, 'pages-contact.html')
 
-def error(request):
-    return render(request,'pages-error-404.html')
+def faq(request):
+    return render(request,'faq.html')

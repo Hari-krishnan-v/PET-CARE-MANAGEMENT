@@ -329,3 +329,29 @@
   }
 
 })();
+
+
+
+// Any Questions?
+
+document.getElementById('accordionContainer').addEventListener('click', function (event) {
+  var target = event.target;
+
+  // Check if the clicked element is an accordion header
+  if (target.classList.contains('accordion-header')) {
+    var section = target.nextElementSibling;
+
+    // Toggle the active class to trigger the transition
+    section.classList.toggle('active');
+
+    // Hide all other sections
+    var allSections = document.querySelectorAll('.accordion-section-content');
+    allSections.forEach(function (otherSection) {
+      if (otherSection !== section && otherSection.classList.contains('active')) {
+        otherSection.classList.remove('active');
+      }
+    });
+  }
+});
+
+

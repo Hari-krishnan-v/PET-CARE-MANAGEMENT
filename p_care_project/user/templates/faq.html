@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} P-Care Home {% endblock %}
+
+{% block maincss %}
+<link href="{% static '/css/faq.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<section class="anyquestion"id="ss">
+    <div class="container">
+        <div class="flex flex-col flex-left flex-wrap">
+            <div class="w-100" data-aos="zoom-in-left">
+                <h2 class="title mt-1">Do you have any questions ?</h2>
+            </div>
+            <div class="flex mt-15 gap-15" id="accordionContainer">
+                <div class="w-50">
+                    <div class="accordion-section" data-aos="fade-up">
+                        <div class="accordion-section-title" >
+                            <div class="accordion-header">
+                                What is the purpose of petcare management system ?
+                            </div>
+                            <div class="accordion-section-content" id="section1">
+                                <p> Pet owners can use the system to schedule appointments
+                                     with their pet's veterinarian, 
+                                     track their pet's vaccinations and medical history.</p>
+                            </div>
+                        </div>
+                        <div class="accordion-section-title">
+                            <div class="accordion-header">
+                                Do I need to make preventive vet appointments ?
+                            </div>
+                            <div class="accordion-section-content" id="section2">
+                                <p>Some people don't like the idea of taking their pet to the vet for check-ups and wellness exams. 
+                                    However, you visit the doctor for regular check-ups, so why shouldn’t your pet? 
+                                    Use this question to explain to people the value of preventive care and how it relates to their specific pet. 
+                                    Also, remind people that if they take the time to find a reputable vet, 
+                                    they will be able to ask them how to proceed when it comes to future vet care and other issues. </p>
+                            </div>
+                        </div>
+                        <div class="accordion-section-title">
+                            <div class="accordion-header">
+                                What kind of pet care services do you provide ?
+                            </div>
+                            <div class="accordion-section-content" id="section3">
+                            <p> This is an obvious one, but it still needs to be on the list because it’s one of the most common questions that people ask.  
+                                We offer appointments scheduling, an one to one chat between user and their doctor.
+                                Medical reports are recorded and stored in our database. 
+                                Medicines can be found in our inventory management. </p>
+                            </div>
+                        </div>
+                        <div class="accordion-section-title">
+                            <div class="accordion-header">
+                                My pet ate something poisonous or dangerous. What do I do?
+                            </div>
+                            <div class="accordion-section-content" id="section4">
+                                <p>Pets are great, but they can also be troublesome. If someone’s pet ingested something they shouldn’t have, 
+                                    it’s normal for the owner to panic a bit. 
+                                    However, they’ll also come looking for answers on the Internet, so they know how to proceed. 
+                                    You will want to advise people to contact poison control 
+                                    if there was a poisonous substance consumed and contact a vet if it was something you’re not sure about or that doesn’t seem poisonous outright. </p>
+                            </div>
+                        </div>
+                        <div class="accordion-section-title">
+                            <div class="accordion-header">
+                                What should I do about my overweight pet ?
+                            </div>
+                            <div class="accordion-section-content" id="section5">
+                                <p> A lot of people end up with overweight pets before they realize how far it’s gotten out of hand, 
+                                    but you can use this space to calm their worries and offer real solutions. pets put on a little extra weight, just like people. 
+                                    The caveat, of course, is that just like people, overweight pets can suffer from a variety of health problems and debilitating conditions. </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-50">
+                    <div class="accordion-section">
+                        <div class="accordion-section" data-aos="fade-down">
+                            <div class="accordion-section-title">
+                                <div class="accordion-header">
+                                    Can my pet take medicines made for humans ?
+                                </div>
+                                <div class="accordion-section-content" id="section6">
+                                    <p>Some pets can take some medicines that are designed for human consumption. 
+                                        For example, it’s generally accepted and approved by vets that diphenhydramine (Benadryl), a popular human allergy medication, 
+                                        can be taken by dogs at a dosing of 1 mg per pound to assist with skin allergies and other itchy issues or allergies. 
+                                        However, you should never do something like this without consulting a doctor first. 
+                                        After all, there’s nothing worse than an adverse reaction that could have serious consequences</p>
+                                </div>
+                            </div>
+                            <div class="accordion-section-title">
+                                <div class="accordion-header">
+                                    How often should I bathe my pet ?
+                                </div>
+                                <div class="accordion-section-content" id="section7">
+                                    <p>Bathing is often a big part of pet care for mammals and other small creatures. 
+                                        However, there are guidelines and best practices. 
+                                        Just like people, you don’t want to overdo it on bathing your pet because it could dry out their skin and cause a host of other issues. 
+                                        This is a good place to build rapport by providing as much information about 
+                                        keeping pets clean as you possibly can and then inviting people to reach out to you to 
+                                        learn more or get the professional pet care that they need. </p>
+                                </div>
+                            </div>
+                            <div class="accordion-section-title">
+                                <div class="accordion-header">
+                                    What should I do if my pet is injured or gets sick?
+                                </div>
+                                <div class="accordion-section-content" id="section8">
+                                    <p>This is a good place to showcase your expertise in pet care. 
+                                        Explain that it’s always best to visit a veterinarian if your pet is sick or injured, but for minor issues, 
+                                        there are some DIY methods you can try first or to hold you over in the meantime. </p>
+                                </div>
+                            </div>
+                            <div class="accordion-section-title">
+                                <div class="accordion-header">
+                                    Does my dog need flea and tick protection around the year?
+                                </div>
+                                <div class="accordion-section-content" id="section9">
+                                    <p>Absolutely! Yes! Fleas and ticks do not go on summer vacations or winter leaves. Tick and fleas carry a number of diseases. 
+                                        None of these diseases have a quick fix. To keep your dogs healthy, 
+                                        you need to protect your dog from ticks and fleas throughout the year.
+                                         Speak to the vet for the best tick and flea treatment for your dog. </p>
+                                </div>
+                            </div>
+                            <div class="accordion-section-title">
+                                <div class="accordion-header">
+                                    How many vaccines does my dog need?
+                                </div>
+                                <div class=" accordion-section-content" id="section10">
+                                    <p>During their first year as a puppy, they will need 4 vaccines along with 4 boosters doses. 
+                                        In India, your puppy should receive Puppy DP, DHPPiL, Anti-Rabies, Canine Corona and Kennel Cough vaccines and boosters. 
+                                        Every year, your dog will need boosters for the DHPPiL, Anti-Rabies, Canine Corona and Kennel Cough vaccines. </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+{% endblock %}

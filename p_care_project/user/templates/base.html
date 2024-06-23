@@ -203,11 +203,11 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            {% if user.customer.profile_image %}
-            <img src="{{ user.customer.profile_image.url }}" alt="Profile"  class="rounded-circle" style="width:50px; height:100px;">
-            {% else %}
-        <p>No profile image available.</p>
-    {% endif %}
+    
+            <img src="{% static '/img/wapg_uwc1_230509.jpg' %}" alt="Profile"  class="rounded-circle" style="width:50px; height:100px;">
+            
+       
+   
             <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.username }}</span>
           </a><!-- End Profile Iamge Icon -->
 
@@ -241,7 +241,7 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+              <a class="dropdown-item d-flex align-items-center" href="{% url "faq" %}">
                 <i class="bi bi-question-circle"></i>
                 <span>Need Help?</span>
               </a>
@@ -288,7 +288,7 @@
       </li><!-- End Profile Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-faq">
+        <a class="nav-link collapsed" href="{% url "faq" %}">
           <i class="bi bi-question-circle"></i>
           <span>F.A.Q</span>
         </a>
