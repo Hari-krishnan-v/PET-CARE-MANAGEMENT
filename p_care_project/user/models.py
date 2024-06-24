@@ -16,6 +16,10 @@ HOSPITAL_CHOICES = [
     # Add more hospitals as needed
 ]
 
+BREED_CHOICE = [
+    ('')
+]
+
 class Appointment(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()

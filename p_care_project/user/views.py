@@ -15,13 +15,13 @@ def login_view(request):
     if request.method == 'POST':
         if 'register' in request.POST:
             context['register'] = True
+           
             try: 
                 username = request.POST.get('username')
                 password = request.POST.get('password')
                 email = request.POST.get('email')
                 address = request.POST.get('address')
                 phone = request.POST.get('phone')
-                profile_image = request.FILES.get('profile_image')
 
                 if User.objects.filter(username=username).exists():
                     messages.error(request, "Username already taken")
