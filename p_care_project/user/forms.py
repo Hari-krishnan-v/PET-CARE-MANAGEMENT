@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django import forms
 from .models import Appointment, HOSPITAL_CHOICES, TREATMENT_CHOICES
+from doctor.models import Hospital
 
 class AppointmentForm(forms.ModelForm):
     class Meta:
@@ -13,7 +14,8 @@ class AppointmentForm(forms.ModelForm):
         }
 
     treatment_type = forms.ChoiceField(choices=TREATMENT_CHOICES, label='Treatment Type', widget=forms.Select(attrs={'class': 'form-control'}))
-    hospital = forms.ChoiceField(choices=HOSPITAL_CHOICES, label='Hospital', widget=forms.Select(attrs={'class': 'form-control'}))
+    hospital = forms.ModelChoiceField(queryset=Hospital.objects.all(), label='Hospital', widget=forms.Select(attrs={'class': 'form-control'}))
+
 
 
 class LoginForm(forms.Form):

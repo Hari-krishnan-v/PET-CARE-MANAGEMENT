@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} P-Care Home {% endblock %}
+
+{% block maincss %}
+<link href="{% static '/css/treatment.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>{{ hospital.name }} Dashboard</h1>
+<h2>Appointments</h2>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Treatment Type</th>
+        <th>Appointment Date</th>
+        <th>Notes</th>
+    </tr>
+    {% for appointment in appointments %}
+    <tr>
+        <td>{{ appointment.name }}</td>
+        <td>{{ appointment.email }}</td>
+        <td>{{ appointment.phone }}</td>
+        <td>{{ appointment.get_treatment_type_display }}</td>
+        <td>{{ appointment.appointment_date }}</td>
+        <td>{{ appointment.notes }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

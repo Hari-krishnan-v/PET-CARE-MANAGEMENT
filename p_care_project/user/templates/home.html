@@ -63,7 +63,8 @@
 
             <!-- vaccination Card -->
             <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card hov-card" onclick = "window.location.href='vaccination.html';">
+              <div class="card info-card revenue-card hov-card" onclick="window.location.href='{% url "vaccination_appointment" next_vaccination_date %}';">
+
 
                 
 
@@ -75,9 +76,12 @@
                         <i class="fa-solid fa-syringe"></i>
                     </div>
                     <div class="ps-3">
-                      <h6>Vaccination</h6>
-                      <span class="text-success small pt-1 fw-bold">Due</span> <span class="text_ucard small pt-2 ps-1">24/04/2024</span>
-
+                      <h6>Vaccination</h6>  {% if next_vaccination_date %}
+                      <span class="text-success small pt-1 fw-bold">Due</span> 
+                      <span class="text_ucard small pt-2 ps-1">{{ next_vaccination_date|date:"d/m/Y" }}</span>
+                    {% else %}
+                      <span class="text-success small pt-1 fw-bold">No vaccinations due</span>
+                    {% endif %}
                     </div>
                   </div>
                 </div>

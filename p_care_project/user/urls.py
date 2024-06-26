@@ -1,14 +1,16 @@
-from django.urls import path
+from django.urls import path,re_path
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
 from django.contrib.auth import views as auth_views
+from .views import vaccination_appointment_view
 
 
 urlpatterns = [
     path('', views.home, name='home'),
     path('profile/', views.profile, name='profile'),
     path('book-appointment/', views.book_appointment, name='book_appointment'),
+    re_path(r'^vaccination_appointment/(?P<date>\d{4}-\d{2}-\d{2})?/$', vaccination_appointment_view, name='vaccination_appointment'),
     path('contact/profile/', views.profile, name='profile'), 
     path('blank/', views.blank, name='blank'),
     path('contact/', views.contact, name='contact'),

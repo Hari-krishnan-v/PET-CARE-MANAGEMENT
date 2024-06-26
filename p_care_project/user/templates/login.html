@@ -42,6 +42,16 @@
                 <input type="password" name='password' minlength="6" required placeholder="Password">
                 <input type="text" name='address' minlength="5" required placeholder="Address">
                 <input type="text" name='phone' minlength="5" required placeholder="Phone">
+                <input type="text" name="pet_name" required placeholder="Pet Name">
+               
+                <input type="date" name="pet_birthdate" required placeholder="Pet Birthdate">
+                <select name="pet_type" required>
+                    <option value="" disabled selected>Select Pet Type</option>
+                    <option value="dog">Dog</option>
+                    <option value="cat">Cat</option>
+                    <option value="bird">Bird</option>
+                    <!-- Add more options as needed -->
+                </select>
                 <br>
                 <input type="submit" name="register" style="background: orange; color: #fff; font-weight: bold;">
             </form>

@@ -8,7 +8,10 @@ from .models import Customer
 from django.core.mail import send_mail
 from django.conf import settings
 from .forms import AppointmentForm
-from .models import Appointment
+from .models import Appointment ,Vaccination
+from .models import PetProfile
+from datetime import date, timedelta
+from django.utils import timezone
 
 def login_view(request):
     context = {}
@@ -22,6 +25,9 @@ def login_view(request):
                 email = request.POST.get('email')
                 address = request.POST.get('address')
                 phone = request.POST.get('phone')
+                pet_name = request.POST['pet_name']
+                pet_birthdate = request.POST['pet_birthdate']
+                pet_type = request.POST['pet_type']
 
                 if User.objects.filter(username=username).exists():
                     messages.error(request, "Username already taken")
@@ -37,9 +43,17 @@ def login_view(request):
                         user=user,
                         phone=phone,
                         address=address,
+                      
                        
                     )
                     customer.save()
+                    pet_profile = PetProfile.objects.create(
+                        user=user,
+                        pet_name=pet_name,
+                        pet_birthdate=pet_birthdate,
+                        pet_type=pet_type
+                    )
+                    pet_profile.save()
                     messages.success(request, "User registered successfully")
             except IntegrityError:
                 messages.error(request, "Duplicate username or invalid credentials")
@@ -58,9 +72,65 @@ def login_view(request):
 
     return render(request, 'login.html', context)
 
+def calculate_next_vaccination_date(pet_type, pet_birthdate):
+    today = date.today()
+    age_in_days = (today - pet_birthdate).days
+
+    if pet_type == 'dog':
+        if age_in_days < 56:
+            return pet_birthdate + timedelta(days=56)
+        elif 56 <= age_in_days < 70:
+            return pet_birthdate + timedelta(days=70)
+        elif 70 <= age_in_days < 84:
+            return pet_birthdate + timedelta(days=84)
+        elif 84 <= age_in_days < 98:
+            return pet_birthdate + timedelta(days=98)
+        else:
+            return today + timedelta(days=365)
+    elif pet_type == 'cat':
+        if age_in_days < 56:
+            return pet_birthdate + timedelta(days=56)
+        elif 56 <= age_in_days < 70:
+            return pet_birthdate + timedelta(days=70)
+        elif 70 <= age_in_days < 84:
+            return pet_birthdate + timedelta(days=84)
+        elif 84 <= age_in_days < 98:
+            return pet_birthdate + timedelta(days=98)
+        else:
+            return today + timedelta(days=365)
+    elif pet_type == 'bird':
+        if age_in_days < 56:
+            return pet_birthdate + timedelta(days=56)
+        else:
+            return today + timedelta(days=365)
+    else:
+        return None
+
 @login_required
 def home(request):
-    return render(request, 'home.html', {'section': 'home'})
+    user = request.user
+    pet_profile = PetProfile.objects.get(user=user)
+    next_vaccination_date = calculate_next_vaccination_date(pet_profile.pet_type, pet_profile.pet_birthdate)
+
+    # Calculate the notification date
+    notification_date = next_vaccination_date - timedelta(days=3)
+
+    # Check if today is the notification date
+    today = timezone.now().date()
+    notifications = []
+    if today >= notification_date and today < next_vaccination_date:
+        notifications.append({
+            'title': 'Vaccination Reminder',
+            'message': f'Next vaccination is due on {next_vaccination_date.strftime("%d %b %Y")}.',
+            'time': 'Just now'
+        })
+
+    context = {
+        'pet_profile': pet_profile,
+        'next_vaccination_date': next_vaccination_date,
+        'notifications': notifications,
+    }
+    return render(request, 'home.html', context)
 
 def logout_view(request):
     logout(request)
@@ -77,14 +147,19 @@ def book_appointment(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.user = request.user
             appointment.save()
             messages.success(request, 'Appointment booked successfully!')
-          
+            return redirect('home')
     else:
         form = AppointmentForm()
-    
     return render(request, 'book_appointment.html', {'form': form})
+
+@login_required
+def vaccination_appointment_view(request):
+    if request.method == "POST":
+        # Handle the appointment booking logic here
+        pass
+    return render(request, 'vaccination_appointment.html')
 
 def profile(request):
     return render(request,'users-profile.html')
