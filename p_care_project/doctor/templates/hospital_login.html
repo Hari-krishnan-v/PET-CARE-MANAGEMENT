@@ -19,11 +19,17 @@
 <body>
 
     <div class="container" id="container">
-       
+
         <div class="form-container sign-in">
-          
+
             <form method="POST">
                 {% csrf_token %}
+                <h1>Sign In</h1>
+                <div class="social-icons">
+                    <a href="{% url "login"%}" class="icon icon-google"><i class="fa fa-user"></i></a>
+                    <a href="{% url 'admin:index' %}" class="icon icon-facebook"><i class="fa fa-lock"></i></a>
+
+                </div>
                 <div>
                     <label for="username">Username:</label>
                     <input type="text" name="username" id="username" required>
@@ -34,19 +40,19 @@
                 </div>
                 <input type="submit">
             </form>
-            
+
         </div>
 
         <div class="toggle-container">
             <div class="toggle">
                 <div class="toggle-panel toggle-left">
-                   
+
                     <button class="hidden" id="login">Sign In</button>
                 </div>
                 <div class="toggle-panel toggle-right">
                     <h1>Welcome Back DOCTOR!</h1>
                     <p>Enter your personal details to use all of site features</p>
-                   
+
                 </div>
             </div>
         </div>

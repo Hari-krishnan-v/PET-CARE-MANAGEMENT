@@ -20,7 +20,7 @@
 
     <div class="container" id="container">
         <div class="form-container sign-up">
-           
+
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h1>Create Account</h1>
@@ -37,34 +37,37 @@
                 </ul>
                 {% endif %}
                 <span>or use your email for registeration</span>
-                <input type="text" name='username' required maxlength="18" minlength="4" placeholder="Usernme">
+                <input type="text" name='username' required maxlength="18" minlength="4" placeholder="Username">
                 <input type="email" name='email' required placeholder="Email">
                 <input type="password" name='password' minlength="6" required placeholder="Password">
                 <input type="text" name='address' minlength="5" required placeholder="Address">
                 <input type="text" name='phone' minlength="5" required placeholder="Phone">
                 <input type="text" name="pet_name" required placeholder="Pet Name">
-               
+                <span>Enter your pet's birthdate</span>
                 <input type="date" name="pet_birthdate" required placeholder="Pet Birthdate">
-                <select name="pet_type" required>
-                    <option value="" disabled selected>Select Pet Type</option>
-                    <option value="dog">Dog</option>
-                    <option value="cat">Cat</option>
-                    <option value="bird">Bird</option>
-                    <!-- Add more options as needed -->
-                </select>
+                <div class="select-container">
+                    <select name="pet_type" required>
+                        <option value="" disabled selected>Select Pet Type</option>
+                        <option value="dog">Dog</option>
+                        <option value="cat">Cat</option>
+                        <option value="bird">Bird</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
+
                 <br>
                 <input type="submit" name="register" style="background: orange; color: #fff; font-weight: bold;">
             </form>
         </div>
         <div class="form-container sign-in">
-          
+
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h1>Sign In</h1>
                 <div class="social-icons">
-                    <a href="#" class="icon icon-google"><i class="fa-brands fa-google-plus-g"></i></a>
-                    <a href="#" class="icon icon-facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" class="icon icon-instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="{% url "hospital_login"%}" class="icon icon-google"><i class="fa fa-user-md"></i></a>
+                    <a href="{% url 'admin:index'%}" class="icon icon-facebook"><i class="fa fa-lock"></i></a>
+
                 </div>
                   {% if messages %}
             <ul>

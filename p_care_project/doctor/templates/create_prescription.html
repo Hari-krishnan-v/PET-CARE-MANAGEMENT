@@ -1,0 +1,71 @@
+{% extends "base_doc.html" %}
+{% load static %}
+{% block title %}Create Prescription{% endblock %}
+
+{% block maincss %}
+<link href="{% static 'css/treatment.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>Create Prescription</h1>
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ prescription_form.as_p }}
+    
+    <h3>Add Medicines</h3>
+    {{ formset.management_form }}
+    <div id="medicine_formset">
+        {% for form in formset %}
+            <div class="form-row">
+                {{ form.name.label_tag }} {{ form.name }} <br>
+                {{ form.dosage.label_tag }} {{ form.dosage }}<br>
+                <button type="button" class="remove-form">Remove</button>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <button type="button" id="add_form">Add Another Medicine</button>
+    <button type="submit">Save Prescription</button>
+</form>
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        let form_idx = $('#medicine_formset .form-row').length;
+    
+        $('#add_form').on('click', function() {
+            $('#medicine_formset').append($('#empty_form').html().replace(/__prefix__/g, form_idx));
+            form_idx++;
+        });
+    
+        $('#medicine_formset').on('click', '.remove-form', function() {
+            $(this).closest('.form-row').remove();
+        });
+    });
+    </script>
+    
+    <script type="text/template" id="empty_form">
+        <div class="form-row">
+            <input type="hidden" name="medicines-__prefix__-id" id="id_medicines-__prefix__-id" />
+            <div class="form-group">
+                <label for="id_medicines-__prefix__-name">Name:</label>
+                <input type="text" name="medicines-__prefix__-name" id="id_medicines-__prefix__-name" />
+            </div>
+            <div class="form-group">
+                <label for="id_medicines-__prefix__-dosage">Dosage:</label>
+                <input type="text" name="medicines-__prefix__-dosage" id="id_medicines-__prefix__-dosage" />
+            </div>
+            <button type="button" class="remove-form">Remove</button>
+        </div>
+    </script>
+    
+
+{% endblock %}

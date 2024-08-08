@@ -67,7 +67,12 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
             <li class="dropdown-header">
               You have {{ notifications|length }} new notifications
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+              <form action="{% url 'clear_all_notifications' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="badge rounded-pill bg-primary p-2 ms-2" style="border: none; background: transparent; color: #fff; cursor: pointer;">
+                  Clear All
+                </button>
+              </form>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -171,7 +176,7 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{ request.user.username }}</h6>
-              <span>Persian cat</span>
+              <span>{{ pet_profile.pet_type}}</span>
             </li>
             <li>
               <hr class="dropdown-divider">

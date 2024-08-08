@@ -1,3 +1,5 @@
+# user/views.py
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -7,11 +9,13 @@ from django.contrib.auth.decorators import login_required
 from .models import Customer
 from django.core.mail import send_mail
 from django.conf import settings
-from .forms import AppointmentForm
-from .models import Appointment ,Vaccination
-from .models import PetProfile
+from .forms import AppointmentForm, VaccinationBookingForm
+from .models import Appointment ,Vaccination ,PetProfile ,Notification
 from datetime import date, timedelta
 from django.utils import timezone
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from doctor.models import Prescription
 
 def login_view(request):
     context = {}
@@ -76,61 +80,120 @@ def calculate_next_vaccination_date(pet_type, pet_birthdate):
     today = date.today()
     age_in_days = (today - pet_birthdate).days
 
-    if pet_type == 'dog':
-        if age_in_days < 56:
-            return pet_birthdate + timedelta(days=56)
-        elif 56 <= age_in_days < 70:
-            return pet_birthdate + timedelta(days=70)
-        elif 70 <= age_in_days < 84:
-            return pet_birthdate + timedelta(days=84)
-        elif 84 <= age_in_days < 98:
-            return pet_birthdate + timedelta(days=98)
-        else:
-            return today + timedelta(days=365)
-    elif pet_type == 'cat':
-        if age_in_days < 56:
-            return pet_birthdate + timedelta(days=56)
-        elif 56 <= age_in_days < 70:
-            return pet_birthdate + timedelta(days=70)
-        elif 70 <= age_in_days < 84:
-            return pet_birthdate + timedelta(days=84)
-        elif 84 <= age_in_days < 98:
-            return pet_birthdate + timedelta(days=98)
-        else:
-            return today + timedelta(days=365)
-    elif pet_type == 'bird':
-        if age_in_days < 56:
-            return pet_birthdate + timedelta(days=56)
-        else:
-            return today + timedelta(days=365)
+    vaccine_schedule = {
+        'dog': [
+            (56, 'Distemper'),
+            (70, 'Parvovirus'),
+            (84, 'Adenovirus'),
+            (98, 'Parainfluenza'),
+            (365, 'Rabies'),
+            (365, 'Leptospirosis'),
+            (365, 'Bordetella (Kennel Cough)'),
+        ],
+        'cat': [
+            (56, 'Feline Viral Rhinotracheitis (FVR)'),
+            (70, 'Feline Calicivirus (FCV)'),
+            (84, 'Feline Panleukopenia (FPV)'),
+            (98, 'Chlamydia'),
+            (365, 'Rabies'),
+            (365, 'Feline Leukemia (FeLV)'),
+        ],
+        'bird': [
+            (56, 'Polyomavirus'),
+            (365, 'Pacheco\'s Disease'),
+            (365, 'Psittacine Beak and Feather Disease (PBFD)'),
+        ],
+    }
+
+    for days, vaccine_name in vaccine_schedule.get(pet_type, []):
+        if age_in_days < days:
+            next_vaccination_date = pet_birthdate + timedelta(days=days)
+            return next_vaccination_date, vaccine_name
+
+    return today + timedelta(days=365), 'Annual Vaccine'
+
+@login_required
+def vaccination_appointment_view(request, next_vaccination_date):
+    user = request.user
+
+    try:
+        pet_profile = PetProfile.objects.get(user=user)
+    except PetProfile.DoesNotExist:
+        messages.error(request, 'Pet profile not found. Please update your profile.')
+        return redirect('profile')  # Or redirect to a suitable page
+
+    next_vaccination_date, vaccine_name = calculate_next_vaccination_date(pet_profile.pet_type, pet_profile.pet_birthdate)
+    due_date = next_vaccination_date
+
+    if request.method == 'POST':
+        form = VaccinationBookingForm(request.POST)
+        if form.is_valid():
+            vaccination = form.save(commit=False)
+            vaccination.user = request.user
+            vaccination.save()
+            messages.success(request, 'Vaccination appointment booked successfully!')
+            return redirect('home')  # Or any other page you want to redirect to
     else:
-        return None
+        form = VaccinationBookingForm(initial={
+            'vaccine_name': vaccine_name,
+            'next_vaccination_date': next_vaccination_date,
+            'due_date': due_date,
+        })
+
+    return render(request, 'vaccination_booking.html', {'form': form, 'next_vaccination_date': next_vaccination_date})
+
 
 @login_required
 def home(request):
     user = request.user
-    pet_profile = PetProfile.objects.get(user=user)
-    next_vaccination_date = calculate_next_vaccination_date(pet_profile.pet_type, pet_profile.pet_birthdate)
 
-    # Calculate the notification date
-    notification_date = next_vaccination_date - timedelta(days=3)
+    try:
+        pet_profile = PetProfile.objects.get(user=user)
+    except PetProfile.DoesNotExist:
+        messages.error(request, 'Pet profile not found. Please update your profile.')
+        pet_profile = None
+        next_vaccination_date = None
+        vaccine_name = None
+        notifications = []  # Ensure notifications is always defined
+        medicine_count = 0  # Default value when pet profile is missing
+    else:
+        prescription_count = Prescription.objects.filter(patient=request.user).count()
+        next_vaccination_date, vaccine_name = calculate_next_vaccination_date(pet_profile.pet_type, pet_profile.pet_birthdate)
+        notification_date = next_vaccination_date - timedelta(days=3)
+        today = timezone.now().date()
+        notifications = []  # Initialize notifications list
 
-    # Check if today is the notification date
-    today = timezone.now().date()
-    notifications = []
-    if today >= notification_date and today < next_vaccination_date:
-        notifications.append({
-            'title': 'Vaccination Reminder',
-            'message': f'Next vaccination is due on {next_vaccination_date.strftime("%d %b %Y")}.',
-            'time': 'Just now'
-        })
+        if today >= notification_date and today < next_vaccination_date:
+            notifications.append({
+                'title': 'Vaccination Reminder',
+                'message': f'Next vaccination ({vaccine_name}) is due on {next_vaccination_date.strftime("%d %b %Y")}.',
+                'time': 'Just now'
+            })
+
+        # Get the latest prescription and its medicine count
+        latest_prescription = Prescription.objects.filter(patient=request.user).order_by('-date').first()
+        medicine_count = latest_prescription.medicines.count() if latest_prescription else 0
+
+    # Fetch unread notifications
+    notifications += Notification.objects.filter(user=user, read=False)
 
     context = {
+        'prescription_count': prescription_count,
         'pet_profile': pet_profile,
         'next_vaccination_date': next_vaccination_date,
         'notifications': notifications,
+        'vaccine_name': vaccine_name,
+        'medicine_count': medicine_count,
     }
     return render(request, 'home.html', context)
+
+@login_required
+def clear_all_notifications(request):
+    user = request.user
+    Notification.objects.filter(user=user, read=False).delete()
+    messages.success(request, 'All notifications have been cleared.')
+    return redirect('home')
+
 
 def logout_view(request):
     logout(request)
@@ -147,22 +210,85 @@ def book_appointment(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
+            appointment.user_id = request.user.id 
             appointment.save()
             messages.success(request, 'Appointment booked successfully!')
-            return redirect('home')
     else:
         form = AppointmentForm()
+    
     return render(request, 'book_appointment.html', {'form': form})
 
-@login_required
-def vaccination_appointment_view(request):
-    if request.method == "POST":
-        # Handle the appointment booking logic here
-        pass
-    return render(request, 'vaccination_appointment.html')
 
+
+@login_required
 def profile(request):
-    return render(request,'users-profile.html')
+    user = request.user
+
+    try:
+        customer = user.customer
+        pet_profile = PetProfile.objects.get(user=user)
+    except PetProfile.DoesNotExist:
+        messages.error(request, 'Pet profile not found. Please update your profile.')
+        pet_profile = None  # or handle this case appropriately
+
+    if request.method == 'POST':
+        pet_name = request.POST.get('pet_name')
+        pet_type = request.POST.get('pet_type')
+        address = request.POST.get('address')
+        phone = request.POST.get('phone')
+        pet_birthdate = request.POST.get('pet_birthdate')
+
+        if pet_profile:
+            pet_profile.pet_name = pet_name
+            pet_profile.pet_type = pet_type
+            pet_profile.pet_birthdate = pet_birthdate
+            pet_profile.save()
+
+        customer.address = address
+        customer.phone = phone
+        customer.save()
+
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('profile')
+
+    context = {
+        'user': user,
+        'customer': customer,
+        'pet_profile': pet_profile,
+    }
+    return render(request, 'users-profile.html', context)
+
+
+@login_required
+def update_settings(request):
+    user = request.user
+    customer = user.customer
+
+    if request.method == 'POST':
+        email_notifications = request.POST.get('email_notifications')
+        customer.email_notifications = bool(email_notifications)
+        customer.save()
+        messages.success(request, 'Settings updated successfully!')
+        return redirect('profile')
+
+    return render(request, 'user_profile.html')
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important to maintain session
+            messages.success(request, 'Password changed successfully!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'user_profile.html', {'form': form})
+
+
 
 def blank(request):
     return render(request,'pages-blank.html')
@@ -194,3 +320,32 @@ def contact(request):
 
 def faq(request):
     return render(request,'faq.html')
+
+def latest_prescription(request):
+    latest_prescription = Prescription.objects.filter(patient=request.user).order_by('-date').first()
+    medicine_count = latest_prescription.medicines.count() if latest_prescription else 0
+
+    if latest_prescription:
+        # Access the hospital associated with the prescription
+        hospital = latest_prescription.hospital
+        doctor_name = hospital.name  # Assuming the hospital's name represents the doctor
+    else:
+        doctor_name = 'No doctor assigned'  # Handle case when there is no prescription
+
+    return render(request, 'latest_prescription.html', {
+        'prescription': latest_prescription,
+        'medicine_count': medicine_count,
+        'doctor_name': doctor_name
+    })
+
+@login_required
+def prescription_history(request):
+    prescriptions = Prescription.objects.filter(patient=request.user).order_by('-date')
+    return render(request, 'prescription_history.html', {'prescriptions': prescriptions})
+
+@login_required
+def clear_prescriptions(request):
+    user = request.user
+    Prescription.objects.filter(patient=user).delete()
+    messages.success(request, 'All previous prescriptions have been cleared.')
+    return redirect('prescription_history')

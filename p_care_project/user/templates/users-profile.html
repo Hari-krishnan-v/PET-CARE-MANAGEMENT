@@ -25,9 +25,9 @@
           <div class="card">
             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-              <img src="{{ user.customer.profile_image.url }}" alt="Profile" class="rounded-circle" style="width:100px; height:100px;">
+              <img src="{% static '/img/wapg_uwc1_230509.jpg' %}" alt="Profile" class="rounded-circle" style="width:100px; height:100px;">
               <h2>{{ request.user.username }}</h2>
-              <h3>labrador</h3>
+              <h3>{{ pet_profile.pet_type}}</h3>
               <div class="social-links mt-2">
                 <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
                 <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -72,21 +72,8 @@
                     <div class="col-lg-3 col-md-4 label ">Username</div>
                     <div class="col-lg-9 col-md-8">{{ request.user.username }}</div>
                   </div>
+                  
 
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Breed</div>
-                    <div class="col-lg-9 col-md-8">labrador</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Age</div>
-                    <div class="col-lg-9 col-md-8">2 year</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-lg-3 col-md-4 label">Country</div>
-                    <div class="col-lg-9 col-md-8">India</div>
-                  </div>
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">Address</div>
@@ -106,184 +93,114 @@
                 </div>
 
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
-
                   <!-- Profile Edit Form -->
-                  <form>
-                    <div class="row mb-3">
-                      <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-                      <div class="col-md-8 col-lg-9">
-                        <img src="assets/img/profile-img.jpg" alt="Profile">
-                        <div class="pt-2">
-                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
-                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                  <form method="post" action="{% url 'profile' %}">
+                      {% csrf_token %}
+                      <div class="row mb-3">
+                          <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Pet Name</label>
+                          <div class="col-md-8 col-lg-9">
+                              <input name="full_name" type="text" class="form-control" id="fullName" value="{{ pet_profile.pet_namee }}">
+                          </div>
+                      </div>
+              
+                      <div class="row mb-3">
+                          <label for="petType" class="col-md-4 col-lg-3 col-form-label">Breed</label>
+                          <div class="col-md-8 col-lg-9">
+                            <div class="select-container">
+                              <select name="pet_type" required>
+                                  <option value="" disabled selected>Select Pet Type</option>
+                                  <option value="dog">Dog</option>
+                                  <option value="cat">Cat</option>
+                                  <option value="bird">Bird</option>
+                                  <!-- Add more options as needed -->
+                              </select>
+                          </div>
+                          </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Pet Birthdate</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="pet_birthdate" type="date" class="form-control" id="fullName" value="{{ pet_profile.pet_birthdate}}">
                         </div>
+                    </div>
+              
+                      <div class="row mb-3">
+                          <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                          <div class="col-md-8 col-lg-9">
+                              <input name="address" type="text" class="form-control" id="address" value="{{ user.customer.address }}">
+                          </div>
                       </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="fullName" type="text" class="form-control" id="fullName" value="Kevin Anderson">
+              
+                      <div class="row mb-3">
+                          <label for="phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                          <div class="col-md-8 col-lg-9">
+                              <input name="phone" type="text" class="form-control" id="phone" value="{{ user.customer.phone }}">
+                          </div>
                       </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
-                      <div class="col-md-8 col-lg-9">
-                        <textarea name="about" class="form-control" id="about" style="height: 100px">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</textarea>
+              
+                      <div class="text-center">
+                          <button type="submit" class="btn btn-primary">Save Changes</button>
                       </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="company" type="text" class="form-control" id="company" value="Lueilwitz, Wisoky and Leuschke">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Job" class="col-md-4 col-lg-3 col-form-label">Job</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="job" type="text" class="form-control" id="Job" value="Web Designer">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Country" class="col-md-4 col-lg-3 col-form-label">Country</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="country" type="text" class="form-control" id="Country" value="USA">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="address" type="text" class="form-control" id="Address" value="A108 Adam Street, New York, NY 535022">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="phone" type="text" class="form-control" id="Phone" value="(436) 486-3538 x29071">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="email" type="email" class="form-control" id="Email" value="k.anderson@example.com">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Twitter" class="col-md-4 col-lg-3 col-form-label">Twitter Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="twitter" type="text" class="form-control" id="Twitter" value="https://twitter.com/#">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Facebook" class="col-md-4 col-lg-3 col-form-label">Facebook Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="facebook" type="text" class="form-control" id="Facebook" value="https://facebook.com/#">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Instagram" class="col-md-4 col-lg-3 col-form-label">Instagram Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="instagram" type="text" class="form-control" id="Instagram" value="https://instagram.com/#">
-                      </div>
-                    </div>
-
-                    <div class="row mb-3">
-                      <label for="Linkedin" class="col-md-4 col-lg-3 col-form-label">Linkedin Profile</label>
-                      <div class="col-md-8 col-lg-9">
-                        <input name="linkedin" type="text" class="form-control" id="Linkedin" value="https://linkedin.com/#">
-                      </div>
-                    </div>
-
-                    <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
                   </form><!-- End Profile Edit Form -->
+              </div>
+              
 
-                </div>
-
-                <div class="tab-pane fade pt-3" id="profile-settings">
-
-                  <!-- Settings Form -->
-                  <form>
-
+              <div class="tab-pane fade pt-3" id="profile-settings">
+                <!-- Settings Form -->
+                <form method="post" action="{% url 'update_settings' %}">
+                    {% csrf_token %}
                     <div class="row mb-3">
-                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
-                      <div class="col-md-8 col-lg-9">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="changesMade" checked>
-                          <label class="form-check-label" for="changesMade">
-                            Changes made to your account
-                          </label>
+                        <label class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                        <div class="col-md-8 col-lg-9">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="changesMade" name="email_notifications" {% if user.customer.email_notifications %} checked {% endif %}>
+                                <label class="form-check-label" for="changesMade">
+                                    Changes made to your account
+                                </label>
+                            </div>
+                            <!-- Add more options as needed -->
                         </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="newProducts" checked>
-                          <label class="form-check-label" for="newProducts">
-                            Information on new products and services
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="proOffers">
-                          <label class="form-check-label" for="proOffers">
-                            Marketing and promo offers
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" id="securityNotify" checked disabled>
-                          <label class="form-check-label" for="securityNotify">
-                            Security alerts
-                          </label>
-                        </div>
-                      </div>
                     </div>
-
+            
                     <div class="text-center">
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
-                  </form><!-- End settings Form -->
+                </form><!-- End Settings Form -->
+            </div>
+            
 
-                </div>
-
-                <div class="tab-pane fade pt-3" id="profile-change-password">
-                  <!-- Change Password Form -->
-                  <form>
-
-                    <div class="row mb-3">
+            <div class="tab-pane fade pt-3" id="profile-change-password">
+              <!-- Change Password Form -->
+              <form method="post" action="{% url 'change_password' %}">
+                  {% csrf_token %}
+                  <div class="row mb-3">
                       <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="password" type="password" class="form-control" id="currentPassword">
+                          <input name="current_password" type="password" class="form-control" id="currentPassword">
                       </div>
-                    </div>
-
-                    <div class="row mb-3">
+                  </div>
+          
+                  <div class="row mb-3">
                       <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="newpassword" type="password" class="form-control" id="newPassword">
+                          <input name="new_password1" type="password" class="form-control" id="newPassword">
                       </div>
-                    </div>
-
-                    <div class="row mb-3">
+                  </div>
+          
+                  <div class="row mb-3">
                       <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
                       <div class="col-md-8 col-lg-9">
-                        <input name="renewpassword" type="password" class="form-control" id="renewPassword">
+                          <input name="new_password2" type="password" class="form-control" id="renewPassword">
                       </div>
-                    </div>
-
-                    <div class="text-center">
+                  </div>
+          
+                  <div class="text-center">
                       <button type="submit" class="btn btn-primary">Change Password</button>
-                    </div>
-                  </form><!-- End Change Password Form -->
-
-                </div>
+                  </div>
+              </form><!-- End Change Password Form -->
+          </div>
+          
 
               </div><!-- End Bordered Tabs -->
 

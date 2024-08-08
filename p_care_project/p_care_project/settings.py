@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ke-afaq$0ht(o=e#42ng7gtw&77jjm5t-@b9@sh&d8b^^)hqby
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.2']
+ALLOWED_HOSTS = ['192.168.1.3']
 
 
 # Application definition
@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'doctor',
-    
+    'django_select2',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,22 @@ MIDDLEWARE = [
 
     'social_django.middleware.SocialAuthExceptionMiddleware', 
 ]
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    },
+    'select2': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/2',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+# Tell select2 which cache configuration to use:
+SELECT2_CACHE_BACKEND = "select2"
 
 ROOT_URLCONF = 'p_care_project.urls'
 

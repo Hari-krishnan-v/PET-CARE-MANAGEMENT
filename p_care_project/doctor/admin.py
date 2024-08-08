@@ -1,10 +1,19 @@
 from django.contrib import admin
 from .models import Hospital
+from .models import Medicine, Prescription
 
 @admin.register(Hospital)
 class HospitalAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at', 'updated_at')  # Adjust according to your model fields
-    list_filter = ('created_at', 'updated_at')  # Adjust according to your model fields
+    list_display = ('name', 'created_at', 'updated_at') 
+    list_filter = ('created_at', 'updated_at') 
 
-    # Optionally, if created_at and updated_at are DateTimeField or DateField
-    date_hierarchy = 'created_at'  # Provides a date-based drilldown navigation in the admin interface
+   
+    date_hierarchy = 'created_at'
+
+@admin.register(Medicine)
+class MedicineAdmin(admin.ModelAdmin):
+    list_display = ['name', 'dosage']
+
+@admin.register(Prescription)
+class PrescriptionAdmin(admin.ModelAdmin):
+    list_display = ['patient', 'date']
