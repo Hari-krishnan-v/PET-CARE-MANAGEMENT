@@ -1,16 +1,17 @@
 # views.py (doctor app)
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Hospital
 from user.models import Appointment
-import datetime
+from datetime import datetime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Prescription, Medicine
 from .forms import PrescriptionForm, MedicineWithDosageForm ,MedicineFormSet
-from user.models import Notification
+from user.models import Notification,PetProfile
+from django.utils import timezone
 
 def hospital_login_view(request):
     if request.method == 'POST':
@@ -23,6 +24,7 @@ def hospital_login_view(request):
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'hospital_login.html')
+
 
 
 @login_required
@@ -44,15 +46,31 @@ def hospital_dashboard(request):
             if 'accept_appointment' in request.POST:
                 appointment_id = request.POST.get("appointment-id")
                 appointment = Appointment.objects.get(id=appointment_id)
-                appointment.scheduled_date = request.POST.get("date")
-                appointment.accepted = True
-                appointment.accepted_date = datetime.datetime.now()
-                appointment.save()
-                messages.success(request, 'Appointment accepted successfully.')
+                
+                # Parse the scheduled date and time
+                scheduled_date = request.POST.get("date", "").strip()
+                scheduled_time = request.POST.get("time", "").strip()
+                
+                if scheduled_date and scheduled_time:
+                    scheduled_datetime_str = f"{scheduled_date} {scheduled_time}"
+                    
+                    try:
+                        # Combine and parse date and time
+                        scheduled_datetime = datetime.strptime(scheduled_datetime_str, "%Y-%m-%d %H:%M")
+                        appointment.scheduled_date = timezone.make_aware(scheduled_datetime)
+                        appointment.accepted = True
+                        appointment.accepted_date = timezone.now()
+                        appointment.save()
+                        
+                        messages.success(request, 'Appointment accepted successfully.')
 
-                # Create a notification for the user
-                message = f"Your appointment scheduled on {appointment.scheduled_date} has been accepted."
-                Notification.objects.create(user=appointment.user, message=message)
+                        # Create a notification for the user
+                        message = f"Your appointment scheduled on {appointment.scheduled_date.strftime('%Y-%m-%d at %H:%M')} has been accepted."
+                        Notification.objects.create(user=appointment.user, message=message)
+                    except ValueError:
+                        messages.error(request, 'Invalid date or time format.')
+                else:
+                    messages.error(request, 'Date and time cannot be empty.')
 
             elif 'clear_appointments' in request.POST:
                 Appointment.objects.filter(hospital=hospital).delete()
@@ -66,16 +84,20 @@ def hospital_dashboard(request):
     else:
         return redirect('hospital_login')
 
-
 @login_required
-def create_prescription(request):
+def create_prescription(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    pet_profile = appointment.pet_profile
+
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
         formset = MedicineFormSet(request.POST, prefix='medicines')
 
         if prescription_form.is_valid() and formset.is_valid():
             prescription = prescription_form.save(commit=False)
+            prescription.pet_profile = pet_profile
             prescription.hospital = request.user.hospital
+            prescription.appointment = appointment
             prescription.save()
             
             medicines = formset.save(commit=False)
@@ -84,16 +106,20 @@ def create_prescription(request):
                 medicine.save()
             
             messages.success(request, 'Prescription created successfully!')
-            # Redirect to the prescription list or another page
+             # Redirect after successful creation
+
     else:
         prescription_form = PrescriptionForm()
         formset = MedicineFormSet(prefix='medicines')
 
+
+
     return render(request, 'create_prescription.html', {
         'prescription_form': prescription_form,
         'formset': formset,
+        'appointment': appointment,
+        'pet_profile': pet_profile,
     })
-
 
 @login_required
 def prescription_list(request):
@@ -101,4 +127,11 @@ def prescription_list(request):
     return render(request, 'prescription_list.html', {'prescriptions': prescriptions})
 
 def hospital_home(request):
-    return render(request, 'home_doc.html')
+    appointment_count = Appointment.objects.filter(hospital=request.user.hospital).count()
+
+    appointment = Appointment.objects.first()  
+    context = {
+        'appointment_count': appointment_count,
+        'appointment_id': appointment.id if appointment else '',  # Make sure appointment_id is set
+    }
+    return render(request, 'home_doc.html', context)

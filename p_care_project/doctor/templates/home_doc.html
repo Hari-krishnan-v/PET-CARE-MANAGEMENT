@@ -53,7 +53,7 @@
                 </div>
                 <div class="ps-1">
                   <h6>Appointments</h6>
-                  <span class="text-success small pt-1 fw-bold"></span><i class="fa-regular fa-circle fa-beat" style="color: #00573d;"></i> <span class="text_ucard small pt-2 ps-1">Active</span>
+                  <span class="text-success small pt-1 fw-bold">{{ appointment_count }}</span><span class="text_ucard small pt-2 ps-1">Active</span>
 
                 </div>
               </div>
@@ -63,10 +63,12 @@
         </div><!-- End treatment Card -->
 
       
-
+{% if appointment_count != 0 %}
         <!-- Prescription Card -->
         <div class="col-xxl-4 col-md-6">
-          <div class="card info-card revenue-card hov-card" onclick = "window.location.href='{% url "create_prescription" %}';">
+          <div class="card info-card revenue-card hov-card" 
+          onclick="window.location.href='{% url 'create_prescription' appointment_id=appointment_id %}';">
+
 
             <div class="card-body">
               <h5 class="card-title"> <span> </span></h5>
@@ -84,7 +86,7 @@
 
           </div>
         </div><!-- End Prescription Card -->
-
+        {% endif %}
         <div class="col-12">
           <div class="card">
 

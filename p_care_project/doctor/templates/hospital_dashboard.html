@@ -371,20 +371,23 @@
                             <div class="widget-49-meeting-info">
                                 <span class="widget-49-pro-title">{{ appointment.email }}</span>
                                 <span class="widget-49-meeting-time">{{ appointment.phone }}</span>
+                                <span class="widget-49-meeting-time">Pet Type: {{ appointment.pet_profile.pet_type }}</span>
                             </div>
                         </div>
                         <div class="widget-49-meeting-points">
                             <span>{{ appointment.notes }}</span>
                         </div>
                         <hr class="w-100">
-                        {% if appointment.accepted == False %}
+                        {% if not appointment.accepted %}
                         <form method="POST" action="{% url 'hospital_dashboard' %}">
                         {% csrf_token %}
                         <div class="form-group">
                             <input type="date" name="date" class="form-control mb-2" 
-                                placeholder="dd-mm-yyyy" value=""
-                                min="1997-01-01" max="2030-12-31">
-                            <input type="hidden" name="appointment-id" value="{{appointment.id}}">
+                                placeholder="Date" 
+                                value="" min="{{ today_date }}" max="2030-12-31">
+                            <input type="time" name="time" class="form-control mb-2" 
+                                placeholder="Time">
+                            <input type="hidden" name="appointment-id" value="{{ appointment.id }}">
                             <input class="btn-block btn-primary form-control" type="submit" name="accept_appointment" value="Accept">
                         </div>
                         </form>
@@ -395,12 +398,12 @@
         </div>
         {% endfor %}
     </div>
-    {% if appointment.accepted == False and appointment.accepted == true %}
+  
     <form method="POST" action="{% url 'hospital_dashboard' %}" class="mt-4">
         {% csrf_token %}
         <input type="submit" name="clear_appointments" value="Clear All Appointments" class="btn btn-danger">
     </form>
-    {% endif %}
+
     <div class="wrapper">
       <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-center">
@@ -420,6 +423,4 @@
             </ul>
         </nav>
     </div>
-
-
 {% endblock %}

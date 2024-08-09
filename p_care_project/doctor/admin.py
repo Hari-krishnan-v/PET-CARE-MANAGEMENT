@@ -14,6 +14,11 @@ class HospitalAdmin(admin.ModelAdmin):
 class MedicineAdmin(admin.ModelAdmin):
     list_display = ['name', 'dosage']
 
-@admin.register(Prescription)
+
 class PrescriptionAdmin(admin.ModelAdmin):
-    list_display = ['patient', 'date']
+    list_display = ('appointment', 'patient', 'pet_profile', 'date', 'hospital', 'dosage')
+    search_fields = ('appointment__name', 'patient__username', 'pet_profile__pet_name', 'hospital__name')
+    list_filter = ('date', 'hospital', 'appointment__hospital')
+
+
+admin.site.register(Prescription, PrescriptionAdmin)

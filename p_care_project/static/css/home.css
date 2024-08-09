@@ -269,6 +269,11 @@
   .card-body {
     padding: 0 20px 20px 20px;
   }
+
+  .card-bodyf {
+    max-height: 130px;
+    padding: 0 20px 20px 20px;
+}
   
   @media (min-width: 1200px){
 
@@ -859,7 +864,7 @@
   }
   
   .dashboard .info-card h6 {
-    font-size: 28px;
+    font-size: 24px;
     color: #291a12;
     font-weight: 700;
     margin: 0;

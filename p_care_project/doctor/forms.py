@@ -4,10 +4,14 @@ from django import forms
 from django.forms import inlineformset_factory
 from .models import Prescription, Medicine
 
+
 class PrescriptionForm(forms.ModelForm):
+    date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
     class Meta:
         model = Prescription
-        fields = ['appointment', 'date', 'patient']
+        fields = ['appointment', 'pet_profile', 'date', 'patient']
 
 class MedicineForm(forms.ModelForm):
     class Meta:

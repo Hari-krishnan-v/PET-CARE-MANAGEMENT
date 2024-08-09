@@ -210,9 +210,20 @@ def book_appointment(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.user_id = request.user.id 
+            appointment.user_id = request.user.id
+
+            # Retrieve the pet profile and set the pet_type
+            try:
+                pet_profile = PetProfile.objects.get(user=request.user)
+                appointment.pet_type = pet_profile.pet_type
+            except PetProfile.DoesNotExist:
+                # Handle the case where PetProfile does not exist
+                messages.error(request, 'Pet profile not found. Please update your profile.')
+                return redirect('profile')
+
             appointment.save()
             messages.success(request, 'Appointment booked successfully!')
+            
     else:
         form = AppointmentForm()
     
