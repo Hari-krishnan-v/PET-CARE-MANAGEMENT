@@ -23,18 +23,16 @@ class Medicine(models.Model):
     def __str__(self):
         return self.name
 
+
 class Prescription(models.Model):
     appointment = models.ForeignKey('user.Appointment', on_delete=models.CASCADE) 
-    patient = models.ForeignKey(User, on_delete=models.CASCADE)
-    pet_profile = models.ForeignKey('user.PetProfile', on_delete=models.CASCADE, default=1)
     date = models.DateField()
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE, null=True, related_name='prescriptions')
     dosage = models.CharField(max_length=255)
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, related_name='prescriptions', default=1)
 
     def __str__(self):
-        return f'Prescription for {self.patient} by {self.hospital}'
+        return f'Prescription for {self.appointment} by {self.hospital}'
 
     def appointment_name(self):
         return self.appointment.name
-

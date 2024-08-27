@@ -89,16 +89,20 @@ def todays_appointments(request):
     today = timezone.now().date()  # Get today's date
     hospital = request.user.hospital
 
+    print(f"Today's Date: {today}")
+    print(f"Hospital: {hospital}")
+
     # Filter appointments to show only accepted ones scheduled for today
     appointments = Appointment.objects.filter(
         hospital=hospital,
         accepted=True,
         scheduled_date__date=today
     ).order_by('-scheduled_date')
-
+    print(f"{appointments}")
     context = {
         'appointments': appointments
     }
+    
     return render(request, 'todays_appointments.html', context)
 
 @login_required
@@ -139,9 +143,49 @@ def create_prescription(request, appointment_id):
     })
 
 @login_required
-def prescription_list(request):
-    prescriptions = Prescription.objects.filter(hospital=request.user.hospital)
-    return render(request, 'prescription_list.html', {'prescriptions': prescriptions})
+def create_prescription(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    pet_profile = appointment.pet_profile
+    doctor = request.user.hospital
+
+    if request.method == 'POST':
+        prescription_form = PrescriptionForm(request.POST)
+        formset = MedicineFormSet(request.POST, prefix='medicines')
+
+        if prescription_form.is_valid() and formset.is_valid():
+            prescription = prescription_form.save(commit=False)
+            prescription.patient = appointment.user  # Link the prescription to the user connected to the appointment
+            prescription.appointment = appointment
+            prescription.hospital = appointment.hospital  # Automatically set the hospital
+            prescription.date = timezone.now().date()  # Automatically set the current date
+            prescription.save()
+            medicines = formset.save(commit=False)
+            for medicine in medicines:
+                medicine.prescription = prescription
+                medicine.save()
+            
+            messages.success(request, 'Prescription created successfully!')
+         # Adjust redirect as needed
+
+    else:
+        # Initialize the form with default values
+        initial_data = {
+            'appointment': appointment,
+            'pet_profile': pet_profile,
+            'date': timezone.now().date(),
+            'hospital': doctor
+        }
+        prescription_form = PrescriptionForm(initial=initial_data)
+        formset = MedicineFormSet(prefix='medicines')
+
+    return render(request, 'create_prescription.html', {
+        'prescription_form': prescription_form,
+        'formset': formset,
+        'appointment': appointment,
+        'pet_profile': pet_profile,
+    })
+
+
 
 def hospital_home(request):
     appointment_count = Appointment.objects.filter(hospital=request.user.hospital).count()

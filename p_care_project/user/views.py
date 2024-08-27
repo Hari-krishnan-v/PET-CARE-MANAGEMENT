@@ -161,8 +161,12 @@ def home(request):
         vaccine_name = None
         notifications = []  # Ensure notifications is always defined
         medicine_count = 0  # Default value when pet profile is missing
+        prescription_count = 0  # Default value when pet profile is missing
     else:
-        prescription_count = Prescription.objects.filter(patient=request.user).count()
+        # Count prescriptions associated with the user through the appointment
+        prescription_count = Prescription.objects.filter(appointment__user=user).count()
+        
+        # Calculate next vaccination date and vaccine name
         next_vaccination_date, vaccine_name = calculate_next_vaccination_date(pet_profile.pet_type, pet_profile.pet_birthdate)
         notification_date = next_vaccination_date - timedelta(days=3)
         today = timezone.now().date()
@@ -176,7 +180,7 @@ def home(request):
             })
 
         # Get the latest prescription and its medicine count
-        latest_prescription = Prescription.objects.filter(patient=request.user).order_by('-date').first()
+        latest_prescription = Prescription.objects.filter(appointment__user=user).order_by('-date').first()
         medicine_count = latest_prescription.medicines.count() if latest_prescription else 0
 
     # Fetch unread notifications
@@ -356,26 +360,30 @@ def contact(request):
 def faq(request):
     return render(request,'faq.html')
 
+@login_required
 def latest_prescription(request):
-    latest_prescription = Prescription.objects.filter(patient=request.user).order_by('-date').first()
-    medicine_count = latest_prescription.medicines.count() if latest_prescription else 0
+    # Retrieve the latest prescription for the logged-in user
+    latest_prescription = Prescription.objects.filter(appointment__user=request.user).order_by('-date').first()
 
     if latest_prescription:
-        # Access the hospital associated with the prescription
-        hospital = latest_prescription.hospital
-        doctor_name = hospital.name  # Assuming the hospital's name represents the doctor
+        # Get all medicines related to the latest prescription
+        medicines = latest_prescription.medicines.all()  # Ensure latest_prescription is not None
     else:
-        doctor_name = 'No doctor assigned'  # Handle case when there is no prescription
+        # If no prescription is found, set medicines to an empty queryset
+        medicines = Medicine.objects.none()
 
-    return render(request, 'latest_prescription.html', {
-        'prescription': latest_prescription,
-        'medicine_count': medicine_count,
-        'doctor_name': doctor_name
-    })
-
+    context = {
+        'latest_prescription': latest_prescription,
+        'medicines': medicines,
+        'prescription_date': latest_prescription.date if latest_prescription else None,
+        'doctor_name': latest_prescription.hospital.name if latest_prescription and latest_prescription.hospital else 'N/A',
+        'medicine_count': medicines.count() if latest_prescription else 0,
+    }
+    return render(request, 'latest_prescription.html', context)
 @login_required
 def prescription_history(request):
-    prescriptions = Prescription.objects.filter(patient=request.user).order_by('-date')
+    # Filter prescriptions based on the user through the related appointment
+    prescriptions = Prescription.objects.filter(appointment__user=request.user).order_by('-date')
     return render(request, 'prescription_history.html', {'prescriptions': prescriptions})
 
 @login_required

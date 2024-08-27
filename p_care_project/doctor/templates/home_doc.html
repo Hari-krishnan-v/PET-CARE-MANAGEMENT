@@ -66,7 +66,7 @@
 {% if appointment_count != 0 %}
         <!-- Prescription Card -->
         <div class="col-xxl-4 col-md-6">
-          <div class="card info-card revenue-card hov-card" 
+          <div class="card info-card medicine-card hov-card" 
           onclick="window.location.href='{% url 'todays_appointments' %}';">
           {% comment %} <div class="card info-card revenue-card hov-card" 
           onclick="window.location.href='{% url 'create_prescription' appointment_id=appointment_id %}';"> {% endcomment %}
@@ -77,10 +77,10 @@
 
               <div class="d-flex align-items-center">
                 <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="fa-solid fa-syringe"></i>
+                  <i class="fa-solid fa-notes-medical fa-beat"></i>
                 </div>
                 <div class="ps-3">
-                  <h6>Prescription</h6> 
+                  <h6>Today's Appointments</h6> 
                   
                 </div>
               </div>

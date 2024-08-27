@@ -6,25 +6,23 @@
 <link href="{% static 'css/treatment.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-<div class="container">
-    <h1>Latest Prescription</h1>
-    {% if prescription %}
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Prescription ID: {{ prescription.id }}</h5>
-                <p class="card-text">Date: {{ prescription.date }}</p>
-                <p class="card-text">Doctor: {{ doctor_name  }}</p>
-                <p class="card-text">Number of Medicines: {{ medicine_count }}</p>
-                <p class="card-text">Medicines:</p>
-                <ul>
-                    {% for medicine in prescription.medicines.all %}
-                        <li>{{ medicine.name }} - {{ medicine.dosage }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    {% else %}
-        <p>No prescriptions found.</p>
-    {% endif %}
-</div>
+<h1>Latest Prescription</h1>
+
+{% if latest_prescription %}
+    <p><strong>Date:</strong> {{ prescription_date }}</p>
+    <p><strong>Doctor:</strong> {{ doctor_name }}</p>
+    <p><strong>Number of Medicines:</strong> {{ medicine_count }}</p>
+
+    <h2>Medicines</h2>
+    <ul>
+    {% for medicine in medicines %}
+        <li>{{ medicine.name }} - {{ medicine.dosage }}</li>
+    {% empty %}
+        <li>No medicines prescribed.</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No prescription found.</p>
+{% endif %}
+
 {% endblock %}
