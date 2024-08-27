@@ -10,7 +10,7 @@ from datetime import datetime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Prescription, Medicine
 from .forms import PrescriptionForm, MedicineWithDosageForm ,MedicineFormSet
-from user.models import Notification,PetProfile
+from user.models import Notification,Vaccination
 from django.utils import timezone
 
 def hospital_login_view(request):
@@ -83,6 +83,23 @@ def hospital_dashboard(request):
         return render(request, 'hospital_dashboard.html', context)
     else:
         return redirect('hospital_login')
+    
+@login_required
+def todays_appointments(request):
+    today = timezone.now().date()  # Get today's date
+    hospital = request.user.hospital
+
+    # Filter appointments to show only accepted ones scheduled for today
+    appointments = Appointment.objects.filter(
+        hospital=hospital,
+        accepted=True,
+        scheduled_date__date=today
+    ).order_by('-scheduled_date')
+
+    context = {
+        'appointments': appointments
+    }
+    return render(request, 'todays_appointments.html', context)
 
 @login_required
 def create_prescription(request, appointment_id):
@@ -135,3 +152,14 @@ def hospital_home(request):
         'appointment_id': appointment.id if appointment else '',  # Make sure appointment_id is set
     }
     return render(request, 'home_doc.html', context)
+@login_required
+def vaccine_bookings(request):
+    # Ensure the user is associated with a hospital
+    if hasattr(request.user, 'hospital'):
+        hospital = request.user.hospital
+        # Filter vaccine bookings by the hospital
+        vaccinations = Vaccination.objects.filter(hospital=hospital).order_by('-next_vaccination_date')
+
+        return render(request, 'vaccine_bookings.html', {'vaccinations': vaccinations})
+    else:
+        return redirect('hospital_login')  # Redirect to login if not associated with any hospital

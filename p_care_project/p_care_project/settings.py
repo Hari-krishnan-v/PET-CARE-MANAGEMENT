@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-ke-afaq$0ht(o=e#42ng7gtw&77jjm5t-@b9@sh&d8b^^)hqby
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app, 192.168.1.3']
+ALLOWED_HOSTS = ['192.168.1.2']
 
 
 # Application definition
@@ -101,15 +101,10 @@ WSGI_APPLICATION = 'p_care_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pcare',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

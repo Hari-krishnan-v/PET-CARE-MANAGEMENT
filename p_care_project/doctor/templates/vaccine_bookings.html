@@ -1,0 +1,57 @@
+{% extends "base_doc.html" %}
+{% load static %}
+
+{% block title %} Vaccine Bookings {% endblock %}
+
+{% block maincss %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="pagetitle">
+  <h1>Vaccine Bookings</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'hospital_home' %}">Home</a></li>
+      <li class="breadcrumb-item active">Vaccine Bookings</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
+
+<section class="section dashboard">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          {% if vaccinations %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Pet Name</th>
+                  <th>Vaccine Name</th>
+                  <th>Next Vaccination Date</th>
+                  <th>Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for vaccination in vaccinations %}
+                  <tr>
+                    <td>{{ vaccination.user.username }}</td>
+                    <td>{{ vaccination.pet_profile.pet_name }}</td>
+                    <td>{{ vaccination.vaccine_name }}</td>
+                    <td>{{ vaccination.next_vaccination_date }}</td>
+                    <td>{{ vaccination.due_date }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p>No vaccine bookings found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div><!-- End Table -->
+  </div>
+</section>
+{% endblock %}

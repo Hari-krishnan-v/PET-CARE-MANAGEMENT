@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.apps import apps
+from doctor.models import Hospital
+
 
 TREATMENT_CHOICES = [
     ('grooming', 'Grooming'),
@@ -64,6 +66,7 @@ class Vaccination(models.Model):
     next_vaccination_date = models.DateField()
     due_date = models.DateField()
     vaccine_name = models.CharField(max_length=100)
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, default=1)
 
     def __str__(self):
         return f"Vaccination for {self.user.username} on {self.next_vaccination_date}"

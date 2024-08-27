@@ -10,7 +10,7 @@ from .models import Customer
 from django.core.mail import send_mail
 from django.conf import settings
 from .forms import AppointmentForm, VaccinationBookingForm
-from .models import Appointment ,Vaccination ,PetProfile ,Notification
+from .models import Appointment ,Vaccination ,PetProfile ,Notification,Hospital
 from datetime import date, timedelta
 from django.utils import timezone
 from django.contrib.auth.forms import PasswordChangeForm
@@ -113,35 +113,40 @@ def calculate_next_vaccination_date(pet_type, pet_birthdate):
     return today + timedelta(days=365), 'Annual Vaccine'
 
 @login_required
-def vaccination_appointment_view(request, next_vaccination_date):
+def vaccination_appointment_view(request, date):
     user = request.user
-
     try:
         pet_profile = PetProfile.objects.get(user=user)
     except PetProfile.DoesNotExist:
         messages.error(request, 'Pet profile not found. Please update your profile.')
         return redirect('profile')  # Or redirect to a suitable page
 
-    next_vaccination_date, vaccine_name = calculate_next_vaccination_date(pet_profile.pet_type, pet_profile.pet_birthdate)
-    due_date = next_vaccination_date
+    pet_type = pet_profile.pet_type  # Use the correct field name
+    pet_birthdate = pet_profile.pet_birthdate  # Use the correct field name
+    next_vaccination_date, vaccine_name = calculate_next_vaccination_date(pet_type, pet_birthdate)
 
     if request.method == 'POST':
         form = VaccinationBookingForm(request.POST)
         if form.is_valid():
             vaccination = form.save(commit=False)
             vaccination.user = request.user
+            vaccination.next_vaccination_date = next_vaccination_date
+            vaccination.due_date = next_vaccination_date  # Modify this logic as needed
+            vaccination.booking_date = timezone.now().date()  # Automatically set booking date to today
             vaccination.save()
+
             messages.success(request, 'Vaccination appointment booked successfully!')
-            return redirect('home')  # Or any other page you want to redirect to
+            return redirect('home')  # Or redirect to any other page you want to
+
     else:
         form = VaccinationBookingForm(initial={
             'vaccine_name': vaccine_name,
             'next_vaccination_date': next_vaccination_date,
-            'due_date': due_date,
+            'due_date': next_vaccination_date,
         })
 
-    return render(request, 'vaccination_booking.html', {'form': form, 'next_vaccination_date': next_vaccination_date})
-
+    hospitals = Hospital.objects.all()  # Retrieve the list of hospitals
+    return render(request, 'vaccination_booking.html', {'form': form, 'hospitals': hospitals, 'next_vaccination_date': next_vaccination_date})
 
 @login_required
 def home(request):
@@ -210,24 +215,43 @@ def book_appointment(request):
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.user_id = request.user.id
+            appointment.user = request.user
 
-            # Retrieve the pet profile and set the pet_type
+            # Retrieve the pet profile
             try:
                 pet_profile = PetProfile.objects.get(user=request.user)
+                appointment.pet_profile = pet_profile
+                appointment.name = pet_profile.pet_name  # Set pet name as the appointment name
+                appointment.email = request.user.email
+                appointment.phone = request.user.customer.phone if hasattr(request.user, 'customer') else 'No Phone'
                 appointment.pet_type = pet_profile.pet_type
             except PetProfile.DoesNotExist:
-                # Handle the case where PetProfile does not exist
                 messages.error(request, 'Pet profile not found. Please update your profile.')
                 return redirect('profile')
 
             appointment.save()
             messages.success(request, 'Appointment booked successfully!')
-            
+            return redirect('home')  # Redirect to a suitable page after saving the appointment
+
     else:
-        form = AppointmentForm()
-    
+        try:
+            pet_profile = PetProfile.objects.get(user=request.user)
+            initial_data = {
+                'name': pet_profile.pet_name,
+                'email': request.user.email,
+                'phone': request.user.customer.phone if hasattr(request.user, 'customer') else 'No Phone',
+                'treatment_type': 'grooming',  # You can set a default value or leave it empty
+                'hospital': None,  # Leave hospital to be selected by the user
+                'notes': '',
+            }
+            form = AppointmentForm(initial=initial_data)
+        except PetProfile.DoesNotExist:
+            form = AppointmentForm()
+
     return render(request, 'book_appointment.html', {'form': form})
+
+def training_centers(request):
+    return render(request, 'training_centers.html')
 
 
 

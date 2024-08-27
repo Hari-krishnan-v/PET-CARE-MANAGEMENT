@@ -14,6 +14,7 @@ urlpatterns = [
     path('prescription_history/', prescription_history, name='prescription_history'),
     path('clear_prescriptions/', views.clear_prescriptions, name='clear_prescriptions'),
     re_path(r'^vaccination_appointment/(?P<date>\d{4}-\d{2}-\d{2})/$', vaccination_appointment_view, name='vaccination_appointment'),
+    path('training-centers/', views.training_centers, name='training_centers'),
     path('contact/profile/', views.profile, name='profile'),
     path('blank/', views.blank, name='blank'),
     path('contact/', views.contact, name='contact'),

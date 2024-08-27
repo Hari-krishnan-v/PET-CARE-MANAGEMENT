@@ -1,0 +1,48 @@
+{% extends "base_doc.html" %}
+{% load static %}
+{% block title %} Today's Appointments {% endblock %}
+{% block maincss %}
+<link href="{% static '/css/home.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="col-11 text-center mt-4 mb-4">
+        <h3>Today's Appointments</h3>
+    </div>
+    <div class="row">
+        {% if appointments_today %}
+            {% for appointment in appointments_today %}
+                <div class="col-lg-4">
+                    <div class="card card-margin">
+                        <div class="card-header no-border">
+                            <h5 class="card-title">{{ appointment.name }}</h5>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="widget-49">
+                                <div class="widget-49-title-wrapper">
+                                    <div class="widget-49-date-primary">
+                                        <span class="widget-49-date-day">{{ appointment.scheduled_date|date:"d" }}</span>
+                                        <span class="widget-49-date-month">{{ appointment.scheduled_date|date:"M" }}</span>
+                                    </div>
+                                    <div class="widget-49-meeting-info">
+                                        <span class="widget-49-pro-title">{{ appointment.user.email }}</span>
+                                        <span class="widget-49-meeting-time">{{ appointment.user.username }}</span>
+                                        <span class="widget-49-meeting-time">Pet Type: {{ appointment.pet_profile.pet_type }}</span>
+                                    </div>
+                                </div>
+                                <div class="widget-49-meeting-points">
+                                    <span>{{ appointment.notes }}</span>
+                                </div>
+                                <hr class="w-100">
+                                <a href="{% url 'create_prescription' appointment.id %}" class="btn btn-primary">Create Prescription</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No appointments scheduled for today.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

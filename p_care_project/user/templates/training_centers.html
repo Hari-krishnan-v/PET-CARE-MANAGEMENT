@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Pet Training Centers {% endblock %}
+{% block maincss %}  
+<link href="{% static '/css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Pet Training Centers</h1>
+    <div class="row">
+        <!-- Training Center 1 -->
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{% static 'img/training_center1.jpg' %}" class="card-img-top" alt="Training Center 1">
+                <div class="card-body">
+                    <h5 class="card-title">Training Center 1</h5>
+                    <p class="card-text">Contact Number: (123) 456-7890</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Center 2 -->
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{% static 'img/training_center2.jpg' %}" class="card-img-top" alt="Training Center 2">
+                <div class="card-body">
+                    <h5 class="card-title">Training Center 2</h5>
+                    <p class="card-text">Contact Number: (234) 567-8901</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Center 3 -->
+        <div class="col-md-4">
+            <div class="card">
+                <img src="{% static 'img/training_center3.jpg' %}" class="card-img-top" alt="Training Center 3">
+                <div class="card-body">
+                    <h5 class="card-title">Training Center 3</h5>
+                    <p class="card-text">Contact Number: (345) 678-9012</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

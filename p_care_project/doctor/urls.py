@@ -7,7 +7,9 @@ urlpatterns = [
     path('hospital/dashboard/', views.hospital_dashboard, name='hospital_dashboard'),
     path('hospital/home/', views.hospital_home, name='hospital_home'),
     path('prescriptions/', views.prescription_list, name='prescription_list'),
+    path('todays_appointments/', views.todays_appointments, name='todays_appointments'),
     path('prescriptions/new/<int:appointment_id>/', create_prescription, name='create_prescription'),
+    path('vaccine-bookings/', views.vaccine_bookings, name='vaccine_bookings'), 
     path("select2/", include("django_select2.urls")),
     # other paths
 ]

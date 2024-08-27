@@ -67,7 +67,9 @@
         <!-- Prescription Card -->
         <div class="col-xxl-4 col-md-6">
           <div class="card info-card revenue-card hov-card" 
-          onclick="window.location.href='{% url 'create_prescription' appointment_id=appointment_id %}';">
+          onclick="window.location.href='{% url 'todays_appointments' %}';">
+          {% comment %} <div class="card info-card revenue-card hov-card" 
+          onclick="window.location.href='{% url 'create_prescription' appointment_id=appointment_id %}';"> {% endcomment %}
 
 
             <div class="card-body">
@@ -87,6 +89,33 @@
           </div>
         </div><!-- End Prescription Card -->
         {% endif %}
+
+            <!-- vaccination Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card hov-card" onclick="window.location.href='{% url 'vaccine_bookings' %}';">
+
+                <div class="card-bodyf">
+                  <h5 class="card-title"> <span> </span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-syringe"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>Vaccination</h6>  
+                      <span class="text-success small pt-1 fw-bold"></span> 
+                      <span class="text_ucard small pt-2 ps-1"></span>
+                      <span class="text_ucard small pt-2 ps-1"></span>
+                  
+                      <span class="text-success small pt-1 fw-bold"></span>
+                
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End vaccination Card -->
+
         <div class="col-12">
           <div class="card">
 

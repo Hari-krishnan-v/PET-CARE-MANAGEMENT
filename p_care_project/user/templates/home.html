@@ -63,7 +63,7 @@
 
             <!-- vaccination Card -->
             <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card hov-card" onclick="window.location.href='{% url 'vaccination_appointment' next_vaccination_date|date:'Y-m-d' %}';">
+              <div class="card info-card revenue-card hov-card" onclick="window.location.href='{% url 'vaccination_appointment' date=next_vaccination_date|date:'Y-m-d' %}';">
 
                 <div class="card-bodyf">
                   <h5 class="card-title"> <span> </span></h5>
@@ -114,7 +114,7 @@
             <!-- Training Card -->
             <div class="col-xxl-4 col-md-6">
 
-              <div class="card info-card training-card hov-card">
+              <div class="card info-card training-card hov-card" onclick = "window.location.href='{% url "training_centers" %}';">
 
                 <div class="card-bodyf">
                   <h5 class="card-title"><span> </span></h5>
@@ -125,7 +125,7 @@
                     </div>
                     <div class="ps-3">
                       <h6>Training</h6>
-                      <span class="text-danger small pt-1 fw-bold">12</span> <span class="text_ucard small pt-2 ps-1">Records</span>
+                      <span class="text-danger small pt-1 fw-bold">3</span> <span class="text_ucard small pt-2 ps-1">Records</span>
 
                     </div>
                   </div>

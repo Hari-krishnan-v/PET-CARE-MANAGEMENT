@@ -1,37 +1,51 @@
-{% extends "base.html" %}
+<!-- templates/vaccination_booking.html -->
+
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %} Book Vaccination Appointment {% endblock %}
-
 {% block maincss %}  
-<link href="{% static 'css/home.css' %}" rel="stylesheet">
+<link href="{% static '/css/home.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="pagetitle">
-  <h1>Book Vaccination Appointment</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-      <li class="breadcrumb-item active">Book Vaccination Appointment</li>
-    </ol>
-  </nav>
+<h2>Book Vaccination Appointment</h2>
+
+<div class="form-container">
+    <h1>Vaccination Booking</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.vaccine_name.id_for_label }}">Vaccine Name</label>
+            {{ form.vaccine_name }}
+            {% if form.vaccine_name.errors %}
+                <div class="error-message">{{ form.vaccine_name.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.next_vaccination_date.id_for_label }}">Next Vaccination Date</label>
+            {{ form.next_vaccination_date }}
+            {% if form.next_vaccination_date.errors %}
+                <div class="error-message">{{ form.next_vaccination_date.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.due_date.id_for_label }}">Due Date</label>
+            {{ form.due_date }}
+            {% if form.due_date.errors %}
+                <div class="error-message">{{ form.due_date.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.hospital.id_for_label }}">Hospital</label>
+            {{ form.hospital }}
+            {% if form.hospital.errors %}
+                <div class="error-message">{{ form.hospital.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <button type="submit" class="submit-button">Book Appointment</button>
+        </div>
+    </form>
 </div>
 
-<section class="section">
-  <div class="row">
-    <div class="col-lg-8 offset-lg-2">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Vaccination Appointment</h5>
-          <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Book Appointment</button>
-        </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 {% endblock %}
