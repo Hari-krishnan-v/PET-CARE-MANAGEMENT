@@ -4,12 +4,13 @@
 
 {% block maincss %}
 <link href="{% static '/css/faq.css' %}" rel="stylesheet">
+<link href="{% static '/css/animation.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
 <section class="anyquestion"id="ss">
-    <div class="container">
+    <div class="container slide-left-animation">
         <div class="flex flex-col flex-left flex-wrap">
             <div class="w-100" data-aos="zoom-in-left">
                 <h2 class="title mt-1">Do you have any questions ?</h2>

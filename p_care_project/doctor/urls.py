@@ -10,5 +10,6 @@ urlpatterns = [
     path('prescriptions/new/<int:appointment_id>/', create_prescription, name='create_prescription'),
     path('vaccine-bookings/', views.vaccine_bookings, name='vaccine_bookings'), 
     path("select2/", include("django_select2.urls")),
+    path('hospital/profile', views.doctor_profile, name='doctor_profile'),
     # other paths
 ]

@@ -4,6 +4,7 @@
 {% block title %}Prescription History{% endblock %}
 {% block maincss %}
 <link href="{% static 'css/treatment.css' %}" rel="stylesheet">
+<link href="{% static '/css/animation.css' %}" rel="stylesheet">
 <!-- <style>
     table, th, td {
         border: 1px solid rgba(0, 0, 0, 0.37);
@@ -17,10 +18,10 @@
 
 <form action="{% url 'clear_prescriptions' %}" method="post" style="margin-bottom: 20px;">
     {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Clear All Prescriptions</button>
+    <button type="submit" class="btn btn-danger slide-down">Clear All Prescriptions</button>
 </form>
 
-<table>
+<table class="slide-down">
     <thead>
         <tr>
             <th>Date</th>

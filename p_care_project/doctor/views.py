@@ -207,3 +207,7 @@ def vaccine_bookings(request):
         return render(request, 'vaccine_bookings.html', {'vaccinations': vaccinations})
     else:
         return redirect('hospital_login')  # Redirect to login if not associated with any hospital
+
+
+def doctor_profile(request):
+    return render(request, 'doctor-profile.html')

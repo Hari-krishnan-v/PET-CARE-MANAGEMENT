@@ -3,39 +3,41 @@
 
 
 /*
-# General
 --------------------------------------------------------------*/
 :root {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    font-family: "Open Sans", sans-serif;
-    background: url(/assets/img/wallpaper/wp8561052-light-theme-wallpapers.png);
-    background-size: cover;
-  
-    color: #444444;
-  }
-  
-  a {
-    color: #4154f1;
-    text-decoration: none;
-  }
-  
-  a:hover {
-    color: #717ff5;
-    text-decoration: none;
-  }
-  
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: "Nunito", sans-serif;
-  }
-  
+  scroll-behavior: smooth;
+  --primary: rgb(122, 48, 143);
+  --light: rgb(199, 95, 228);
+  --text-color: rgb(184, 132, 199);
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+
+  background-size: cover;
+
+  color: #444444;
+}
+
+a {
+  color: #4154f1;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #717ff5;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Nunito", sans-serif;
+}
+
   /*--------------------------------------------------------------
   # Main
   --------------------------------------------------------------*/

@@ -355,3 +355,13 @@ document.getElementById('accordionContainer').addEventListener('click', function
 });
 
 
+
+document.addEventListener('DOMContentLoaded', function () {
+  const cards = document.querySelectorAll('.card');
+  cards.forEach((card, index) => {
+    // Add a delay for each card for a staggered effect
+    setTimeout(() => {
+      card.classList.add('animate');
+    }, index * 200); // Adjust the delay as needed
+  });
+});

@@ -9,7 +9,7 @@
 
 body{
     background-color: #c9d6ff;
-    background-image: url(/assets/img/7AtXsIl-dog-pictures-wallpaper.jpg);
+    background: url('../img/wallpaper/wp8561052-light-theme-wallpapers.png');
     backdrop-filter: blur(5px);
     background-size: cover;
     /* background: linear-gradient(to right, #e2e2e2, #c9d6ff); */

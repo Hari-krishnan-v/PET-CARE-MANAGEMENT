@@ -11,7 +11,7 @@
   
   body {
     font-family: "Open Sans", sans-serif;
-    background: url(/assets/img/wallpaper/wp8561052-light-theme-wallpapers.png);
+    /* background: url('../img/wallpaper/wp8561052-light-theme-wallpapers.png'); */
     background-size: cover;
   
     color: #444444;

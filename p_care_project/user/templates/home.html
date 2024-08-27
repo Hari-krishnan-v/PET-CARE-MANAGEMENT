@@ -5,6 +5,7 @@
 
 {% block maincss %}  
 <link href="{% static '/css/home.css' %}" rel="stylesheet">
+<link href="{% static '/css/animation.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %} 
@@ -18,7 +19,7 @@
       </nav>
     </div><!-- End Page Title -->
 
-    <section class="section dashboard">
+    <section class="section dashboard ">
   
       <div class="row">
 
@@ -28,7 +29,7 @@
 
             <!-- Treatment Card -->
             <div class="col-xxl-4 col-md-6">
-              <div class="card info-card treatment-card hov-card" onclick = "window.location.href='{% url "book_appointment" %}';">
+              <div class="card info-card treatment-card hov-card zoom-in-animation" onclick = "window.location.href='{% url "book_appointment" %}';">
 
                 <div class="filter">
                   <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -48,7 +49,7 @@
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="ri-home-heart-fill"></i>
+                        <i class="ri-home-heart-fill fa-beat"></i>
                     </div>
                     <div class="ps-3">
                       <h6>Appointments</h6>
@@ -63,14 +64,14 @@
 
             <!-- vaccination Card -->
             <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card hov-card" onclick="window.location.href='{% url 'vaccination_appointment' date=next_vaccination_date|date:'Y-m-d' %}';">
+              <div class="card info-card revenue-card hov-card zoom-in-animation" onclick="window.location.href='{% url 'vaccination_appointment' date=next_vaccination_date|date:'Y-m-d' %}';">
 
                 <div class="card-bodyf">
                   <h5 class="card-title"> <span> </span></h5>
 
                   <div class="d-flex align-items-center">
                     <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                        <i class="fa-solid fa-syringe"></i>
+                        <i class="fa-solid fa-syringe fa-beat"></i>
                     </div>
                     <div class="ps-3">
                       <h6>Vaccination</h6>  {% if next_vaccination_date %}
@@ -90,7 +91,7 @@
             <!-- History Card -->
             <div class="col-xxl-4 col-md-6">
 
-              <div class="card info-card customers-card hov-card" onclick = "window.location.href='{% url 'prescription_history' %}';">
+              <div class="card info-card customers-card hov-card zoom-in-animation" onclick = "window.location.href='{% url 'prescription_history' %}';">
 
                 <div class="card-bodyf">
                   <h5 class="card-title"><span> </span></h5>
@@ -114,7 +115,7 @@
             <!-- Training Card -->
             <div class="col-xxl-4 col-md-6">
 
-              <div class="card info-card training-card hov-card" onclick = "window.location.href='{% url "training_centers" %}';">
+              <div class="card info-card training-card hov-card zoom-in-animation" onclick = "window.location.href='{% url "training_centers" %}';">
 
                 <div class="card-bodyf">
                   <h5 class="card-title"><span> </span></h5>
@@ -138,7 +139,7 @@
             <!-- SUBSCRIPTION Card -->
             <div class="col-xxl-4 col-md-6">
 
-              <div class=" info-card SUBSCRIPTION-card hov-card">
+              <div class=" info-card SUBSCRIPTION-card hov-card zoom-in-animation">
 
                
                 <button class="button" id="sub">
@@ -155,7 +156,7 @@
              <!-- medicine Card -->
              <div class="col-xxl-4 col-md-6">
 
-              <div class="card info-card medicine-card hov-card" onclick="window.location.href='{% url 'latest_prescription' %}';">
+              <div class="card info-card medicine-card hov-card zoom-in-animation" onclick="window.location.href='{% url 'latest_prescription' %}';">
 
                 
 
@@ -212,7 +213,7 @@
         </div><!-- End Left side columns -->
 
         <!-- Right side columns -->
-        <div class="col-lg-4">
+        <div class="col-lg-4 slide-left-animation">
 
          
 
