@@ -4,26 +4,27 @@
 {% block title %} Latest Prescription {% endblock %}
 {% block maincss %}
 <link href="{% static 'css/treatment.css' %}" rel="stylesheet">
-<link href="{% static '/css/animation.css' %}" rel="stylesheet">
+<link href="{% static 'css/animation.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-<h1>Latest Prescription</h1>
+<div class="prescription-container zoom-in-animation">
+  <h1>Latest Prescription</h1>
 
-{% if latest_prescription %}
-    <p><strong>Date:</strong> {{ prescription_date }}</p>
-    <p><strong>Doctor:</strong> {{ doctor_name }}</p>
-    <p><strong>Number of Medicines:</strong> {{ medicine_count }}</p>
+  {% if latest_prescription %}
+      <p><strong>Date:</strong> {{ prescription_date }}</p>
+      <p><strong>Doctor:</strong> {{ doctor_name }}</p>
+      <p><strong>Number of Medicines:</strong> {{ medicine_count }}</p>
 
-    <h2>Medicines</h2>
-    <ul>
-    {% for medicine in medicines %}
-        <li>{{ medicine.name }} - {{ medicine.dosage }}</li>
-    {% empty %}
-        <li>No medicines prescribed.</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No prescription found.</p>
-{% endif %}
-
+      <h2>Medicines</h2>
+      <ul>
+      {% for medicine in medicines %}
+          <li>{{ medicine.name }} - {{ medicine.dosage }}</li>
+      {% empty %}
+          <li class="no-prescription">No medicines prescribed.</li>
+      {% endfor %}
+      </ul>
+  {% else %}
+      <p class="no-prescription">No prescription found.</p>
+  {% endif %}
+</div>
 {% endblock %}

@@ -45,6 +45,8 @@ h6 {
     margin-top: 60px;
     padding: 20px 30px;
     transition: all 0.3s;
+    flex: 1; 
+    min-height: 740px;
   }
   
   @media (max-width: 1199px) {
@@ -77,9 +79,11 @@ h6 {
 */
 
 .container {
-  width: 1400px;
-  height: 650px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
+
 
 .app-color-blue-1 {
   color: #346EE1;
@@ -983,6 +987,7 @@ form button:hover {
   padding: 20px;
 }
 
+
 .appointments-table {
   margin-top: 20px;
 }
@@ -1011,4 +1016,61 @@ tr:nth-child(even) {
 
 .table-responsive {
   overflow-x: auto;
+}
+
+/* Prescription Page Styles */
+.prescription-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f5f5f5;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.prescription-container h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-family: "Nunito", sans-serif;
+  color: #4b4233;
+}
+
+.prescription-container p {
+  font-size: 16px;
+  margin: 10px 0;
+  font-family: "Open Sans", sans-serif;
+  color: #333;
+}
+
+.prescription-container h2 {
+  font-size: 20px;
+  margin-top: 20px;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 5px;
+  font-family: "Nunito", sans-serif;
+  color: #4b4233;
+}
+
+.prescription-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.prescription-container ul li {
+  font-size: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  color: #555;
+}
+
+.prescription-container ul li:last-child {
+  border-bottom: none;
+}
+
+.no-prescription {
+  font-size: 16px;
+  color: #e0899c;
+  font-style: italic;
 }

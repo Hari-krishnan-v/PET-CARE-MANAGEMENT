@@ -33,6 +33,10 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
   <!-- Template Main CSS File -->
   {% block maincss %} 
  
@@ -213,6 +217,9 @@
 
   </main><!-- End #main -->
 
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
@@ -223,8 +230,45 @@
     </div>
   </footer><!-- End Footer -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  
+{% comment %} toaster js {% endcomment %}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Load Toastr -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Toastr configuration
+    toastr.options = {
+      closeButton: true,
+      debug: false,
+      newestOnTop: false,
+      progressBar: true,
+      positionClass: 'toast-bottom-right', // Position the toastr at the bottom right
+      preventDuplicates: false,
+      onclick: null,
+      showDuration: '300', // Duration for showing the toast
+      hideDuration: '1000', // Duration for hiding the toast
+      timeOut: '5000', // Duration the toast stays visible
+      extendedTimeOut: '1000', // Duration to extend the visibility of the toast on hover
+      showEasing: 'swing',
+      hideEasing: 'linear',
+      showMethod: 'fadeIn',
+      hideMethod: 'fadeOut',
+      toastClass: 'toast-custom' // Custom class for additional styling
+    };
+
+    // Display toastr messages
+    {% if messages %}
+      {% for message in messages %}
+        toastr.{{ message.tags }}("{{ message.message }}");
+      {% endfor %}
+    {% endif %}
+  });
+</script>
+
+  
   
 
   <!-- Vendor JS Files -->

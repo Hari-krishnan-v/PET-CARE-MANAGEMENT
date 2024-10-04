@@ -96,54 +96,54 @@
                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
                   <!-- Profile Edit Form -->
                   <form method="post" action="{% url 'profile' %}">
-                      {% csrf_token %}
-                      <div class="row mb-3">
-                          <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Pet Name</label>
-                          <div class="col-md-8 col-lg-9">
-                              <input name="full_name" type="text" class="form-control" id="fullName" value="{{ pet_profile.pet_namee }}">
-                          </div>
-                      </div>
-              
-                      <div class="row mb-3">
-                          <label for="petType" class="col-md-4 col-lg-3 col-form-label">Breed</label>
-                          <div class="col-md-8 col-lg-9">
-                            <div class="select-container">
-                              <select name="pet_type" required>
-                                  <option value="" disabled selected>Select Pet Type</option>
-                                  <option value="dog">Dog</option>
-                                  <option value="cat">Cat</option>
-                                  <option value="bird">Bird</option>
-                                  <!-- Add more options as needed -->
-                              </select>
-                          </div>
-                          </div>
-                      </div>
-
-                      <div class="row mb-3">
-                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Pet Birthdate</label>
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="petName" class="col-md-4 col-lg-3 col-form-label">Pet Name</label>
                         <div class="col-md-8 col-lg-9">
-                            <input name="pet_birthdate" type="date" class="form-control" id="fullName" value="{{ pet_profile.pet_birthdate}}">
+                            <input name="pet_name" type="text" class="form-control" id="petName" value="{{ pet_profile.pet_name }}">
                         </div>
                     </div>
-              
-                      <div class="row mb-3">
-                          <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
-                          <div class="col-md-8 col-lg-9">
-                              <input name="address" type="text" class="form-control" id="address" value="{{ user.customer.address }}">
-                          </div>
-                      </div>
-              
-                      <div class="row mb-3">
-                          <label for="phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-                          <div class="col-md-8 col-lg-9">
-                              <input name="phone" type="text" class="form-control" id="phone" value="{{ user.customer.phone }}">
-                          </div>
-                      </div>
-              
-                      <div class="text-center">
-                          <button type="submit" class="btn btn-primary">Save Changes</button>
-                      </div>
-                  </form><!-- End Profile Edit Form -->
+                
+                    <div class="row mb-3">
+                        <label for="petType" class="col-md-4 col-lg-3 col-form-label">Breed</label>
+                        <div class="col-md-8 col-lg-9">
+                            <div class="select-container">
+                                <select name="pet_type" class="form-control" id="petType">
+                                    <option value="" disabled>Select Pet Type</option>
+                                    <option value="dog" {% if pet_profile.pet_type == "dog" %}selected{% endif %}>Dog</option>
+                                    <option value="cat" {% if pet_profile.pet_type == "cat" %}selected{% endif %}>Cat</option>
+                                    <option value="bird" {% if pet_profile.pet_type == "bird" %}selected{% endif %}>Bird</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="row mb-3">
+                        <label for="petBirthdate" class="col-md-4 col-lg-3 col-form-label">Pet Birthdate</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="pet_birthdate" type="date" class="form-control" id="petBirthdate" value="{{ pet_profile.pet_birthdate }}">
+                        </div>
+                    </div>
+                
+                    <div class="row mb-3">
+                        <label for="address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="address" type="text" class="form-control" id="address" value="{{ customer.address }}">
+                        </div>
+                    </div>
+                
+                    <div class="row mb-3">
+                        <label for="phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                        <div class="col-md-8 col-lg-9">
+                            <input name="phone" type="text" class="form-control" id="phone" value="{{ customer.phone }}">
+                        </div>
+                    </div>
+                
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+                   <!-- End Profile Edit Form -->
               </div>
               
 
@@ -211,4 +211,33 @@
         </div>
       </div>
     </section>
+    <!-- Load jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Load Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Toastr Script for Messages -->
+    <script>
+        $(document).ready(function() {
+            {% if toastr_message %}
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "5000"
+                };
+                toastr["{{ toastr_type }}"]("{{ toastr_message }}");
+            {% endif %}
+        });
+    </script>
+    {% if messages %}
+    {% for message in messages %}
+      <script>
+        toastr.{{ message.tags }}("{{ message.message }}");
+      </script>
+    {% endfor %}
+  {% endif %}
+  
+
     {% endblock %}

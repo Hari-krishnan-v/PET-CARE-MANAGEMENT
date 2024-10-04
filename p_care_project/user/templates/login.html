@@ -8,12 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="{% static '/css/login.css' %}">
 
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <!-- Favicons -->
     <link href="{% static '/img/cute.jpg' %}" rel="icon">
     <link href="{% static '/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
 
     <title> Login Page</title>
+
+    
 </head>
 
 <body>
@@ -29,13 +33,7 @@
                     <a href="#" class="icon icon-facebook"><i class="fa-brands fa-facebook-f"></i></a>
                     <a href="#" class="icon icon-instagram"><i class="fa-brands fa-instagram"></i></a>
                 </div>
-                {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                        {% endfor %}
-                </ul>
-                {% endif %}
+               
                 <span>or use your email for registeration</span>
                 <input type="text" name='username' required maxlength="18" minlength="4" placeholder="Username">
                 <input type="email" name='email' required placeholder="Email">
@@ -56,7 +54,7 @@
                 </div>
 
                 <br>
-                <input type="submit" name="register" style="background: orange; color: #fff; font-weight: bold;">
+                <input type="submit" value="Submit" name="register" style="background: orange; color: #fff; font-weight: bold;">
             </form>
         </div>
         <div class="form-container sign-in">
@@ -69,18 +67,12 @@
                     <a href="{% url 'admin:index'%}" class="icon icon-facebook"><i class="fa fa-lock"></i></a>
 
                 </div>
-                  {% if messages %}
-            <ul>
-                {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                    {% endfor %}
-            </ul>
-                {% endif %}
+                 
                 <span>or use your email password</span>
                 <input type="text" name='username' placeholder="Username" required>
                 <input type="password" name='password' placeholder="Password" required>
                 <a href="{% url 'password_reset' %}" id="Forget">Forget Your Password?</a>
-                <input type="submit" name='login' style="background: orange; color: #fff; font-weight: bold;">
+                <input type="submit" value="Submit" name='login' style="background: orange; color: #fff; font-weight: bold;">
             </form>
         </div>
 
@@ -115,7 +107,34 @@
         <li></li>
         <li></li>
     </ul>
+    <!-- Load jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+    <!-- Load Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <!-- Toastr Script for Messages -->
+    <script>
+        $(document).ready(function() {
+            {% if toastr_message %}
+                toastr.options = {
+                    "closeButton": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "timeOut": "5000"
+                };
+                toastr["{{ toastr_type }}"]("{{ toastr_message }}");
+            {% endif %}
+        });
+    </script>
+    {% if messages %}
+    {% for message in messages %}
+      <script>
+        toastr.{{ message.tags }}("{{ message.message }}");
+      </script>
+    {% endfor %}
+  {% endif %}
+  
     <script src="{% static '/js/login.js' %}"></script>
 
     {% if register %}

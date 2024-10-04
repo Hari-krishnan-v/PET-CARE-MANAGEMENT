@@ -21,7 +21,7 @@ class AppointmentForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
-
+    
 class VaccinationBookingForm(forms.ModelForm):
     hospital = forms.ModelChoiceField(queryset=Hospital.objects.all(), required=True)
     

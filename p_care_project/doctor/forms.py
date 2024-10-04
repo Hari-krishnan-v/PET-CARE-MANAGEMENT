@@ -11,6 +11,7 @@ class PrescriptionForm(forms.ModelForm):
         model = Prescription
         fields = ['appointment', 'date']
 
+
 class MedicineForm(forms.ModelForm):
     class Meta:
         model = Medicine
@@ -18,7 +19,7 @@ class MedicineForm(forms.ModelForm):
 
 class MedicineWithDosageForm(forms.ModelForm):
     name = forms.ModelChoiceField(queryset=Medicine.objects.all(), empty_label="Select a medicine")
-    
+
     class Meta:
         model = Medicine
         fields = ['name', 'dosage']
@@ -27,7 +28,7 @@ class MedicineWithDosageForm(forms.ModelForm):
 MedicineFormSet = inlineformset_factory(
     Prescription,
     Medicine,
-    form=MedicineWithDosageForm, 
-    extra=4,
-    can_delete=True
+    form=MedicineWithDosageForm,
+    extra=4,  # Initial number of empty forms
+    can_delete=True  # Allows deletion of forms
 )

@@ -13,6 +13,8 @@
     <link href="{% static '/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
     <title> Login Page</title>
 </head>
 
@@ -38,7 +40,7 @@
                     <label for="password">Password:</label>
                     <input type="password" name="password" id="password" required>
                 </div>
-                <input type="submit">
+                <input type="submit" value="Submit" style="background: orange; color: #fff; font-weight: bold;">
             </form>
 
         </div>
@@ -75,6 +77,45 @@
     </ul>
 
     <script src="{% static '/js/login.js' %}"></script>
+      
+{% comment %} toaster js {% endcomment %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Load Toastr -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Toastr configuration
+    toastr.options = {
+      closeButton: true,
+      debug: false,
+      newestOnTop: false,
+      progressBar: true,
+      positionClass: 'toast-bottom-right', // Position the toastr at the bottom right
+      preventDuplicates: false,
+      onclick: null,
+      showDuration: '300', // Duration for showing the toast
+      hideDuration: '1000', // Duration for hiding the toast
+      timeOut: '5000', // Duration the toast stays visible
+      extendedTimeOut: '1000', // Duration to extend the visibility of the toast on hover
+      showEasing: 'swing',
+      hideEasing: 'linear',
+      showMethod: 'fadeIn',
+      hideMethod: 'fadeOut',
+      toastClass: 'toast-custom' // Custom class for additional styling
+    };
+
+    // Display toastr messages
+    {% if messages %}
+      {% for message in messages %}
+        toastr.{{ message.tags }}("{{ message.message }}");
+      {% endfor %}
+    {% endif %}
+  });
+</script>
+
+  
 
     {% if register %}
     <script>

@@ -109,43 +109,6 @@ def todays_appointments(request):
 def create_prescription(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
     pet_profile = appointment.pet_profile
-
-    if request.method == 'POST':
-        prescription_form = PrescriptionForm(request.POST)
-        formset = MedicineFormSet(request.POST, prefix='medicines')
-
-        if prescription_form.is_valid() and formset.is_valid():
-            prescription = prescription_form.save(commit=False)
-            prescription.pet_profile = pet_profile
-            prescription.hospital = request.user.hospital
-            prescription.appointment = appointment
-            prescription.save()
-            
-            medicines = formset.save(commit=False)
-            for medicine in medicines:
-                medicine.prescription = prescription
-                medicine.save()
-            
-            messages.success(request, 'Prescription created successfully!')
-             # Redirect after successful creation
-
-    else:
-        prescription_form = PrescriptionForm()
-        formset = MedicineFormSet(prefix='medicines')
-
-
-
-    return render(request, 'create_prescription.html', {
-        'prescription_form': prescription_form,
-        'formset': formset,
-        'appointment': appointment,
-        'pet_profile': pet_profile,
-    })
-
-@login_required
-def create_prescription(request, appointment_id):
-    appointment = get_object_or_404(Appointment, id=appointment_id)
-    pet_profile = appointment.pet_profile
     doctor = request.user.hospital
 
     if request.method == 'POST':
@@ -162,6 +125,7 @@ def create_prescription(request, appointment_id):
             medicines = formset.save(commit=False)
             for medicine in medicines:
                 medicine.prescription = prescription
+                print(medicine.prescription)
                 medicine.save()
             
             messages.success(request, 'Prescription created successfully!')
@@ -196,6 +160,7 @@ def hospital_home(request):
         'appointment_id': appointment.id if appointment else '',  # Make sure appointment_id is set
     }
     return render(request, 'home_doc.html', context)
+
 @login_required
 def vaccine_bookings(request):
     # Ensure the user is associated with a hospital

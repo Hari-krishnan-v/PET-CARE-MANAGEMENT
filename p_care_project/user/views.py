@@ -1,21 +1,24 @@
 # user/views.py
 
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout,update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
-from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from .models import Customer
+from django.db import IntegrityError
 from django.core.mail import send_mail
 from django.conf import settings
 from .forms import AppointmentForm, VaccinationBookingForm
-from .models import Appointment ,Vaccination ,PetProfile ,Notification,Hospital
 from datetime import date, timedelta
 from django.utils import timezone
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
-from doctor.models import Prescription
+from django.urls import reverse
+from django.views.decorators.http import require_POST
+# models
+from .models import PetProfile ,Notification,Hospital,Appointment,Customer, Vaccination
+from doctor.models import Prescription,Medicine
+
 
 def login_view(request):
     context = {}
@@ -34,9 +37,11 @@ def login_view(request):
                 pet_type = request.POST['pet_type']
 
                 if User.objects.filter(username=username).exists():
-                    messages.error(request, "Username already taken")
+                    context['toastr_message'] = "Username already taken"
+                    context['toastr_type'] = "error"
                 elif User.objects.filter(email=email).exists():
-                    messages.error(request, "Email already taken")
+                    context['toastr_message'] = "Email already taken"
+                    context['toastr_type'] = "error"
                 else:
                     user = User.objects.create_user(
                         username=username,
@@ -46,23 +51,22 @@ def login_view(request):
                     customer = Customer.objects.create(
                         user=user,
                         phone=phone,
-                        address=address,
-                      
-                       
+                        address=address
                     )
-                    customer.save()
                     pet_profile = PetProfile.objects.create(
                         user=user,
                         pet_name=pet_name,
                         pet_birthdate=pet_birthdate,
                         pet_type=pet_type
                     )
-                    pet_profile.save()
-                    messages.success(request, "User registered successfully")
+                    context['toastr_message'] = "User registered successfully"
+                    context['toastr_type'] = "success"
             except IntegrityError:
-                messages.error(request, "Duplicate username or invalid credentials")
+                context['toastr_message'] = "Duplicate username or invalid credentials"
+                context['toastr_type'] = "error"
             except Exception as e:
-                messages.error(request, str(e))
+                context['toastr_message'] = str(e)
+                context['toastr_type'] = "error"
         elif 'login' in request.POST:
             context['register'] = False
             username = request.POST['username']
@@ -70,11 +74,16 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user:
                 auth_login(request, user)
+                # Set success message for Toastr
+                context['toastr_message'] = 'Logged in successfully'
+                context['toastr_type'] = 'success'
                 return redirect('home')
             else:
-                messages.error(request, 'Invalid username or password')
+                context['toastr_message'] = 'Invalid username or password'
+                context['toastr_type'] = 'error'
 
     return render(request, 'login.html', context)
+
 
 def calculate_next_vaccination_date(pet_type, pet_birthdate):
     today = date.today()
@@ -118,11 +127,10 @@ def vaccination_appointment_view(request, date):
     try:
         pet_profile = PetProfile.objects.get(user=user)
     except PetProfile.DoesNotExist:
-        messages.error(request, 'Pet profile not found. Please update your profile.')
-        return redirect('profile')  # Or redirect to a suitable page
+        return redirect('profile')
 
-    pet_type = pet_profile.pet_type  # Use the correct field name
-    pet_birthdate = pet_profile.pet_birthdate  # Use the correct field name
+    pet_type = pet_profile.pet_type
+    pet_birthdate = pet_profile.pet_birthdate
     next_vaccination_date, vaccine_name = calculate_next_vaccination_date(pet_type, pet_birthdate)
 
     if request.method == 'POST':
@@ -131,12 +139,12 @@ def vaccination_appointment_view(request, date):
             vaccination = form.save(commit=False)
             vaccination.user = request.user
             vaccination.next_vaccination_date = next_vaccination_date
-            vaccination.due_date = next_vaccination_date  # Modify this logic as needed
-            vaccination.booking_date = timezone.now().date()  # Automatically set booking date to today
+            vaccination.due_date = next_vaccination_date
+            vaccination.booking_date = timezone.now().date()
             vaccination.save()
 
             messages.success(request, 'Vaccination appointment booked successfully!')
-            return redirect('home')  # Or redirect to any other page you want to
+            return redirect('vaccination_appointment', date=date)  # Correct URL name
 
     else:
         form = VaccinationBookingForm(initial={
@@ -145,8 +153,19 @@ def vaccination_appointment_view(request, date):
             'due_date': next_vaccination_date,
         })
 
-    hospitals = Hospital.objects.all()  # Retrieve the list of hospitals
+    hospitals = Hospital.objects.all()
     return render(request, 'vaccination_booking.html', {'form': form, 'hospitals': hospitals, 'next_vaccination_date': next_vaccination_date})
+
+require_POST
+def undo_vaccination(request):
+    appointment_id = request.POST.get('id')
+    if appointment_id:
+        try:
+            Vaccination.objects.filter(id=appointment_id).delete()
+            return JsonResponse({'status': 'success'})
+        except Vaccination.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Appointment not found'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid data'})
 
 @login_required
 def home(request):
@@ -159,18 +178,18 @@ def home(request):
         pet_profile = None
         next_vaccination_date = None
         vaccine_name = None
-        notifications = []  # Ensure notifications is always defined
-        medicine_count = 0  # Default value when pet profile is missing
-        prescription_count = 0  # Default value when pet profile is missing
+        notifications = []  
+        medicine_count = 0 
+        prescription_count = 0  
     else:
-        # Count prescriptions associated with the user through the appointment
+        
         prescription_count = Prescription.objects.filter(appointment__user=user).count()
         
-        # Calculate next vaccination date and vaccine name
+       
         next_vaccination_date, vaccine_name = calculate_next_vaccination_date(pet_profile.pet_type, pet_profile.pet_birthdate)
         notification_date = next_vaccination_date - timedelta(days=3)
         today = timezone.now().date()
-        notifications = []  # Initialize notifications list
+        notifications = []  
 
         if today >= notification_date and today < next_vaccination_date:
             notifications.append({
@@ -179,11 +198,9 @@ def home(request):
                 'time': 'Just now'
             })
 
-        # Get the latest prescription and its medicine count
         latest_prescription = Prescription.objects.filter(appointment__user=user).order_by('-date').first()
         medicine_count = latest_prescription.medicines.count() if latest_prescription else 0
 
-    # Fetch unread notifications
     notifications += Notification.objects.filter(user=user, read=False)
 
     context = {
@@ -204,6 +221,7 @@ def clear_all_notifications(request):
     return redirect('home')
 
 
+
 def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
@@ -211,31 +229,40 @@ def logout_view(request):
 
 
 
-
-
 @login_required
 def book_appointment(request):
     if request.method == 'POST':
+        if 'undo' in request.POST:
+            undo_data = request.session.pop('undo_appointment', None)
+            if undo_data:
+                Appointment.objects.filter(id=undo_data['id']).delete()
+                messages.info(request, 'Appointment booking undone.')
+            return redirect(reverse('book_appointment'))
+
         form = AppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.user = request.user
-
-            # Retrieve the pet profile
             try:
                 pet_profile = PetProfile.objects.get(user=request.user)
                 appointment.pet_profile = pet_profile
-                appointment.name = pet_profile.pet_name  # Set pet name as the appointment name
+                appointment.name = pet_profile.pet_name
                 appointment.email = request.user.email
                 appointment.phone = request.user.customer.phone if hasattr(request.user, 'customer') else 'No Phone'
                 appointment.pet_type = pet_profile.pet_type
             except PetProfile.DoesNotExist:
                 messages.error(request, 'Pet profile not found. Please update your profile.')
-                return redirect('profile')
+                return redirect(reverse('book_appointment'))
 
             appointment.save()
+            request.session['undo_appointment'] = {
+                'id': appointment.id,
+                'name': appointment.name,
+                'email': appointment.email,
+                'phone': appointment.phone,
+                'pet_type': appointment.pet_type,
+            }
             messages.success(request, 'Appointment booked successfully!')
-            return redirect('home')  # Redirect to a suitable page after saving the appointment
 
     else:
         try:
@@ -244,8 +271,8 @@ def book_appointment(request):
                 'name': pet_profile.pet_name,
                 'email': request.user.email,
                 'phone': request.user.customer.phone if hasattr(request.user, 'customer') else 'No Phone',
-                'treatment_type': 'grooming',  # You can set a default value or leave it empty
-                'hospital': None,  # Leave hospital to be selected by the user
+                'treatment_type': 'grooming',
+                'hospital': None,
                 'notes': '',
             }
             form = AppointmentForm(initial=initial_data)
@@ -254,9 +281,9 @@ def book_appointment(request):
 
     return render(request, 'book_appointment.html', {'form': form})
 
+
 def training_centers(request):
     return render(request, 'training_centers.html')
-
 
 
 @login_required
@@ -265,10 +292,10 @@ def profile(request):
 
     try:
         customer = user.customer
-        pet_profile = PetProfile.objects.get(user=user)
+        pet_profile, created = PetProfile.objects.get_or_create(user=user)  # Ensure pet_profile is created if not exists
     except PetProfile.DoesNotExist:
         messages.error(request, 'Pet profile not found. Please update your profile.')
-        pet_profile = None  # or handle this case appropriately
+        pet_profile = None  
 
     if request.method == 'POST':
         pet_name = request.POST.get('pet_name')
@@ -277,10 +304,19 @@ def profile(request):
         phone = request.POST.get('phone')
         pet_birthdate = request.POST.get('pet_birthdate')
 
+        print(pet_name)
+        print(pet_type)
+        print(address)
+        print(phone)
+        print(pet_birthdate)
+
         if pet_profile:
-            pet_profile.pet_name = pet_name
-            pet_profile.pet_type = pet_type
-            pet_profile.pet_birthdate = pet_birthdate
+            if pet_name:
+                pet_profile.pet_name = pet_name
+            if pet_type:
+                pet_profile.pet_type = pet_type
+            if pet_birthdate:
+                pet_profile.pet_birthdate = pet_birthdate
             pet_profile.save()
 
         customer.address = address
@@ -296,7 +332,6 @@ def profile(request):
         'pet_profile': pet_profile,
     }
     return render(request, 'users-profile.html', context)
-
 
 @login_required
 def update_settings(request):
@@ -318,7 +353,7 @@ def change_password(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Important to maintain session
+            update_session_auth_hash(request, user)  
             messages.success(request, 'Password changed successfully!')
             return redirect('profile')
         else:
@@ -362,14 +397,14 @@ def faq(request):
 
 @login_required
 def latest_prescription(request):
-    # Retrieve the latest prescription for the logged-in user
+    
     latest_prescription = Prescription.objects.filter(appointment__user=request.user).order_by('-date').first()
 
     if latest_prescription:
-        # Get all medicines related to the latest prescription
-        medicines = latest_prescription.medicines.all()  # Ensure latest_prescription is not None
+        
+        medicines = latest_prescription.medicines.all()
     else:
-        # If no prescription is found, set medicines to an empty queryset
+        
         medicines = Medicine.objects.none()
 
     context = {
@@ -389,6 +424,7 @@ def prescription_history(request):
 @login_required
 def clear_prescriptions(request):
     user = request.user
-    Prescription.objects.filter(patient=user).delete()
+    # Filter prescriptions where the related appointment's user is the current user
+    Prescription.objects.filter(appointment__user=user).delete()
     messages.success(request, 'All previous prescriptions have been cleared.')
     return redirect('prescription_history')

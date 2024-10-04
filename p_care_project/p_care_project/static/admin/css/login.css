@@ -27,7 +27,7 @@
 .login #container {
     background: var(--body-bg);
     border: 1px solid var(--hairline-color);
-    border-radius: 4px;
+    border-radius: 20px;
     overflow: hidden;
     width: 28em;
     min-width: 300px;

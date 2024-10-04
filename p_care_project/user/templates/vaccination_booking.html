@@ -6,6 +6,9 @@
 {% block maincss %}  
 <link href="{% static '/css/home.css' %}" rel="stylesheet">
 <link href="{% static '/css/animation.css' %}" rel="stylesheet">
+
+
+  
 {% endblock %}
 
 {% block content %}
@@ -48,5 +51,56 @@
         </div>
     </form>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        toastr.options = {
+            closeButton: true,
+            debug: false,
+            newestOnTop: false,
+            progressBar: true,
+            positionClass: 'toast-bottom-right',
+            preventDuplicates: false,
+            onclick: null,
+            showDuration: '300',
+            hideDuration: '1000',
+            timeOut: '5000',
+            extendedTimeOut: '1000',
+            showEasing: 'swing',
+            hideEasing: 'linear',
+            showMethod: 'fadeIn',
+            hideMethod: 'fadeOut',
+            toastClass: 'toast-custom'
+        };
+
+        // Display toastr messages
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    toastr.success(
+                        '{{ message.message }}',
+                        '', {
+                            closeButton: true,
+                            onclick: function() {
+                                // Logic to handle undo action
+                                $.post('{% url "undo_vaccination" %}', {
+                                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                                    id: '{{ request.session.undo_vaccination.id }}'  // Pass the appointment ID or relevant data
+                                }).done(function(response) {
+                                    toastr.info('Vaccination appointment undone.');
+                                }).fail(function() {
+                                    toastr.error('Failed to undo the appointment.');
+                                });
+                            },
+                            tapToDismiss: false,  // Ensure the toast stays visible until the button is clicked
+                            extendedTimeOut: '0'
+                        }
+                    );
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    });
+</script>
 
 {% endblock %}

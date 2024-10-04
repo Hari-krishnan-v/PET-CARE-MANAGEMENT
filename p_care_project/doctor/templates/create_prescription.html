@@ -11,20 +11,54 @@
     </div>
     <form method="post">
         {% csrf_token %}
-        {% if messages %}
-              {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-                  {{ message }}
-                </div>
-              {% endfor %}
-            {% endif %}
+        
         {{ prescription_form.as_p }}
         <h4>Medicines</h4>
         {{ formset.management_form }}
-        {% for form in formset %}
-            {{ form.as_p }}
-        {% endfor %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="medicine-formset">
+                {% for form in formset %}
+                    <tr>
+                        <td>{{ form.name }}</td>
+                        <td>{{ form.dosage }}</td>
+                        <td>
+                            {% if form.DELETE %}
+                                {{ form.DELETE }} {{ form.DELETE.label_tag }}  <!-- Checkbox for deletion -->
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="button" id="add-more-medicines" class="btn btn-secondary">Add More Medicines</button>
         <button type="submit" class="btn btn-primary">Save Prescription</button>
     </form>
 </div>
+
+<script>
+    document.getElementById('add-more-medicines').addEventListener('click', function() {
+        var formset = document.getElementById('medicine-formset');
+        var totalForms = document.querySelector('[name="medicines-TOTAL_FORMS"]').value;
+        var newFormIndex = parseInt(totalForms);
+        
+        var formHtml = `
+            <tr>
+                <td><input type="text" name="medicines-${newFormIndex}-name" placeholder="Medicine Name" required></td>
+                <td><input type="text" name="medicines-${newFormIndex}-dosage" placeholder="Dosage" required></td>
+                <td><input type="checkbox" name="medicines-${newFormIndex}-DELETE"> Delete</td>
+            </tr>
+        `;
+        formset.insertAdjacentHTML('beforeend', formHtml);
+
+        // Update the total forms count in the management form
+        document.querySelector('[name="medicines-TOTAL_FORMS"]').value = newFormIndex + 1;
+    });
+</script>
 {% endblock %}
