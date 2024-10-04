@@ -20,7 +20,7 @@ def hospital_login_view(request):
         user = authenticate(request, username=username, password=password)
         if user and hasattr(user, 'hospital'):
             auth_login(request, user)
-            return redirect('hospital_home')  # Ensure 'hospital_dashboard' matches your URL name
+            return redirect('hospital_home') 
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'hospital_login.html')
@@ -129,6 +129,7 @@ def create_prescription(request, appointment_id):
                 medicine.save()
             
             messages.success(request, 'Prescription created successfully!')
+            return redirect('hospital_home')
          # Adjust redirect as needed
 
     else:
